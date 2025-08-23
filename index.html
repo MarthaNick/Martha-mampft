@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Weekly Meal Planner</title>
+    <title>Martha's Meals</title>
     <style>
       * {
         margin: 0;
@@ -30,12 +30,20 @@
 
       .button-container {
         display: flex;
+        flex-direction: column;
         gap: 20px;
         margin-bottom: 40px;
+        align-items: center;
+      }
+
+      .button-row {
+        display: flex;
+        gap: 20px;
         flex-wrap: wrap;
         justify-content: center;
       }
 
+      /* Base button styles */
       .generate-btn,
       .surprise-btn,
       .next-week-btn,
@@ -45,81 +53,101 @@
       .banned-btn,
       .save-btn,
       .load-btn {
-        background: linear-gradient(45deg, #3498db, #2980b9);
-        color: white;
         border: none;
         padding: 15px 30px;
         font-size: 18px;
         border-radius: 25px;
         cursor: pointer;
         transition: all 0.3s ease;
-        box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        color: #333;
+        font-weight: 500;
       }
 
-      .generate-btn:hover,
-      .surprise-btn:hover,
-      .next-week-btn:hover,
-      .prev-week-btn:hover,
-      .export-btn:hover,
-      .favorites-btn:hover,
-      .banned-btn:hover,
-      .save-btn:hover,
-      .load-btn:hover {
+      /* Row 1: Green pastels (Generate, Next, Previous) */
+      .generate-btn {
+        background: linear-gradient(45deg, #c8e6c9, #a5d6a7);
+        box-shadow: 0 4px 15px rgba(165, 214, 167, 0.4);
+      }
+
+      .generate-btn:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
-        background: linear-gradient(45deg, #2980b9, #1f618d);
+        background: linear-gradient(45deg, #a5d6a7, #81c784);
+        box-shadow: 0 6px 20px rgba(165, 214, 167, 0.6);
       }
 
       .surprise-btn {
-        background: linear-gradient(45deg, #f39c12, #e67e22);
-        box-shadow: 0 4px 15px rgba(243, 156, 18, 0.3);
+        background: linear-gradient(45deg, #dcedc8, #c5e1a5);
+        box-shadow: 0 4px 15px rgba(197, 225, 165, 0.4);
       }
 
       .surprise-btn:hover {
-        background: linear-gradient(45deg, #e67e22, #d35400);
-        box-shadow: 0 6px 20px rgba(243, 156, 18, 0.4);
+        background: linear-gradient(45deg, #c5e1a5, #aed581);
+        box-shadow: 0 6px 20px rgba(197, 225, 165, 0.6);
       }
 
       .next-week-btn,
       .prev-week-btn {
-        background: linear-gradient(45deg, #27ae60, #229954);
-        box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+        background: linear-gradient(45deg, #b2dfdb, #80cbc4);
+        box-shadow: 0 4px 15px rgba(128, 203, 196, 0.4);
       }
 
       .next-week-btn:hover,
       .prev-week-btn:hover {
-        background: linear-gradient(45deg, #229954, #1e8449);
-        box-shadow: 0 6px 20px rgba(39, 174, 96, 0.4);
+        background: linear-gradient(45deg, #80cbc4, #4db6ac);
+        box-shadow: 0 6px 20px rgba(128, 203, 196, 0.6);
       }
 
-      .export-btn {
-        background: linear-gradient(45deg, #9b59b6, #8e44ad);
-        box-shadow: 0 4px 15px rgba(155, 89, 182, 0.3);
-      }
-
-      .export-btn:hover {
-        background: linear-gradient(45deg, #8e44ad, #7d3c98);
-        box-shadow: 0 6px 20px rgba(155, 89, 182, 0.4);
-      }
-
+      /* Row 2: Blue pastels (Favorites, Banned) */
       .favorites-btn {
-        background: linear-gradient(45deg, #e74c3c, #c0392b);
-        box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+        background: linear-gradient(45deg, #e1f5fe, #b3e5fc);
+        box-shadow: 0 4px 15px rgba(179, 229, 252, 0.4);
       }
 
       .favorites-btn:hover {
-        background: linear-gradient(45deg, #c0392b, #a93226);
-        box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+        background: linear-gradient(45deg, #b3e5fc, #81d4fa);
+        box-shadow: 0 6px 20px rgba(179, 229, 252, 0.6);
       }
 
       .banned-btn {
-        background: linear-gradient(45deg, #95a5a6, #7f8c8d);
-        box-shadow: 0 4px 15px rgba(149, 165, 166, 0.3);
+        background: linear-gradient(45deg, #e8eaf6, #c5cae9);
+        box-shadow: 0 4px 15px rgba(197, 202, 233, 0.4);
       }
 
       .banned-btn:hover {
-        background: linear-gradient(45deg, #7f8c8d, #6c7b7d);
-        box-shadow: 0 6px 20px rgba(149, 165, 166, 0.4);
+        background: linear-gradient(45deg, #c5cae9, #9fa8da);
+        box-shadow: 0 6px 20px rgba(197, 202, 233, 0.6);
+      }
+
+      /* Row 3: Yellow pastel (Export) */
+      .export-btn {
+        background: linear-gradient(45deg, #fff9c4, #fff59d);
+        box-shadow: 0 4px 15px rgba(255, 245, 157, 0.4);
+      }
+
+      .export-btn:hover {
+        background: linear-gradient(45deg, #fff59d, #fff176);
+        box-shadow: 0 6px 20px rgba(255, 245, 157, 0.6);
+      }
+
+      /* Row 4: Red pastels (Save, Load) */
+      .save-btn {
+        background: linear-gradient(45deg, #ffebee, #ffcdd2);
+        box-shadow: 0 4px 15px rgba(255, 205, 210, 0.4);
+      }
+
+      .save-btn:hover {
+        background: linear-gradient(45deg, #ffcdd2, #ef9a9a);
+        box-shadow: 0 6px 20px rgba(255, 205, 210, 0.6);
+      }
+
+      .load-btn {
+        background: linear-gradient(45deg, #fce4ec, #f8bbd9);
+        box-shadow: 0 4px 15px rgba(248, 187, 217, 0.4);
+      }
+
+      .load-btn:hover {
+        background: linear-gradient(45deg, #f8bbd9, #f48fb1);
+        box-shadow: 0 6px 20px rgba(248, 187, 217, 0.6);
       }
 
       .week-indicator {
@@ -268,6 +296,13 @@
         margin-bottom: 10px;
       }
 
+      .shopping-list-buttons {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        margin-top: 15px;
+      }
+
       .back-btn {
         background: linear-gradient(45deg, #95a5a6, #7f8c8d);
         color: white;
@@ -282,78 +317,186 @@
         background: linear-gradient(45deg, #7f8c8d, #6c7b7d);
         transform: translateY(-2px);
       }
+
+      .download-btn {
+        background: linear-gradient(45deg, #fff9c4, #fff59d);
+        color: #333;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 500;
+      }
+
+      .download-btn:hover {
+        background: linear-gradient(45deg, #fff59d, #fff176);
+        transform: translateY(-2px);
+      }
+
+      #shoppingListContent {
+        max-width: 800px;
+        margin: 0 auto;
+        text-align: left;
+      }
+
+      .shopping-week-info {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+
+      .shopping-meals-list {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 25px;
+      }
+
+      .shopping-meals-list h3 {
+        color: #27ae60;
+        margin-bottom: 15px;
+      }
+
+      .shopping-meal-item {
+        margin: 8px 0;
+        font-weight: bold;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .portion-count {
+        color: #e67e22;
+        font-size: 14px;
+        font-weight: normal;
+      }
+
+      .shopping-category-section {
+        margin-bottom: 25px;
+      }
+
+      .shopping-category-title {
+        color: #3498db;
+        margin-bottom: 10px;
+        border-left: 4px solid #3498db;
+        padding-left: 10px;
+        font-size: 1.2em;
+        font-weight: bold;
+      }
+
+      .shopping-ingredients-list {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 10px 20px;
+        max-width: 100%;
+        background: white;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      }
+
+      .shopping-ingredient {
+        border-bottom: 1px dotted #ccc;
+        padding: 8px 0;
+      }
+
+      .shopping-amount {
+        font-weight: bold;
+        color: #e67e22;
+        text-align: right;
+        border-bottom: 1px dotted #ccc;
+        padding: 8px 0;
+      }
     </style>
   </head>
   <body>
-    <h1>Weekly Meal Planner</h1>
+    <h1>Martha's Meals</h1>
 
     <div class="button-container">
-      <button class="generate-btn" onclick="generateMeals()">
-        Generate This Week's Meals
-      </button>
-      <button
-        class="surprise-btn"
-        onclick="surpriseMe()"
-        id="surpriseBtn"
-        style="display: none"
-      >
-        🎲 Surprise Me
-      </button>
-      <button
-        class="next-week-btn"
-        onclick="nextWeek()"
-        id="nextWeekBtn"
-        style="display: none"
-      >
-        Next Week →
-      </button>
-      <button
-        class="prev-week-btn"
-        onclick="previousWeek()"
-        id="prevWeekBtn"
-        style="display: none"
-      >
-        ← Previous Week
-      </button>
-      <button
-        class="export-btn"
-        onclick="exportShoppingList()"
-        id="exportBtn"
-        style="display: none"
-      >
-        📋 Export Shopping List
-      </button>
-      <button
-        class="favorites-btn"
-        onclick="showFavorites()"
-        id="favoritesBtn"
-        style="display: none"
-      >
-        ❤️ Favorites
-      </button>
-      <button
-        class="banned-btn"
-        onclick="showBanned()"
-        id="bannedBtn"
-        style="display: none"
-      >
-        🚫 Banned
-      </button>
-      <button
-        class="save-btn"
-        onclick="saveState()"
-        id="saveBtn"
-        style="display: none"
-      >
-        💾 Save State
-      </button>
-      <button
-        class="load-btn"
-        onclick="loadState()"
-        id="loadBtn"
-      >
-        📂 Load State
-      </button>
+      <!-- Row 1: Generate, Next, Previous (Green pastels) -->
+      <div class="button-row">
+        <button class="generate-btn" onclick="generateMeals()">
+          Generate This Week's Meals
+        </button>
+        <button
+          class="surprise-btn"
+          onclick="surpriseMe()"
+          id="surpriseBtn"
+          style="display: none"
+        >
+          🎲 Surprise Me
+        </button>
+        <button
+          class="next-week-btn"
+          onclick="nextWeek()"
+          id="nextWeekBtn"
+          style="display: none"
+        >
+          Next Week →
+        </button>
+        <button
+          class="prev-week-btn"
+          onclick="previousWeek()"
+          id="prevWeekBtn"
+          style="display: none"
+        >
+          ← Previous Week
+        </button>
+      </div>
+
+      <!-- Row 2: Favorites, Banned (Blue pastels) -->
+      <div class="button-row">
+        <button
+          class="favorites-btn"
+          onclick="showFavorites()"
+          id="favoritesBtn"
+          style="display: none"
+        >
+          ❤️ Favorites
+        </button>
+        <button
+          class="banned-btn"
+          onclick="showBanned()"
+          id="bannedBtn"
+          style="display: none"
+        >
+          🚫 Banned
+        </button>
+      </div>
+
+      <!-- Row 3: Export Shopping List (Yellow pastel) -->
+      <div class="button-row">
+        <button
+          class="export-btn"
+          onclick="showShoppingList()"
+          id="exportBtn"
+          style="display: none"
+        >
+          📋 View Shopping List
+        </button>
+      </div>
+
+      <!-- Row 4: Save, Load State (Red pastels) -->
+      <div class="button-row">
+        <button
+          class="save-btn"
+          onclick="saveState()"
+          id="saveBtn"
+          style="display: none"
+        >
+          💾 Save State
+        </button>
+        <button
+          class="load-btn"
+          onclick="loadState()"
+          id="loadBtn"
+        >
+          📂 Load State
+        </button>
+      </div>
     </div>
 
     <div class="week-indicator" id="weekIndicator" style="display: none">
@@ -381,6 +524,21 @@
         </button>
       </div>
       <div class="meals-container show" id="bannedMealsGrid"></div>
+    </div>
+
+    <div class="list-container" id="shoppingListContainer">
+      <div class="list-header">
+        <h2>📋 Shopping List</h2>
+        <div class="shopping-list-buttons">
+          <button class="back-btn" onclick="showMainView()">
+            ← Back to Meal Planner
+          </button>
+          <button class="download-btn" onclick="downloadShoppingList()">
+            📥 Download List
+          </button>
+        </div>
+      </div>
+      <div id="shoppingListContent"></div>
     </div>
 
     <script>
@@ -684,12 +842,124 @@
                   updateWeekDisplay();
               }
 
-              function exportShoppingList() {
+              function showShoppingList() {
                   if (!allWeeklyMeals[currentWeek]) {
                       alert('No meals generated for this week!');
                       return;
                   }
 
+                  const isMainView = document.getElementById('mealsContainer').style.display !== 'none';
+                  
+                  if (isMainView) {
+                      document.getElementById('mealsContainer').style.display = 'none';
+                      document.querySelector('.button-container').style.display = 'none';
+                      document.getElementById('weekIndicator').style.display = 'none';
+                  }
+
+                  document.getElementById('favoritesContainer').style.display = 'none';
+                  document.getElementById('bannedContainer').style.display = 'none';
+                  document.getElementById('shoppingListContainer').style.display = 'block';
+
+                  generateShoppingListContent();
+              }
+
+              function generateShoppingListContent() {
+                  const weekMeals = allWeeklyMeals[currentWeek];
+                  const calendarWeek = getCalendarWeekForMealWeek(currentWeek);
+
+                  // Define ingredient categories in typical supermarket order
+                  const categories = {
+                      'Fresh Vegetables & Herbs': ['asparagus', 'spinach', 'arugula', 'rucola', 'kale', 'brussels sprouts', 'cabbage', 'peas', 'broccoli', 'zucchini', 'bell peppers', 'eggplants', 'cucumber', 'tomatoes', 'cherry tomatoes', 'onions', 'red onion', 'garlic', 'ginger', 'carrots', 'pumpkin', 'winter squash', 'seasonal vegetables', 'spring vegetables', 'seasonal root vegetables', 'mixed seasonal greens', 'mixed greens', 'basil', 'parsley', 'chives', 'thyme', 'rosemary', 'sage', 'oregano', 'dill', 'mint', 'herbs', 'seasonal herbs', 'fresh herbs', 'bok choy', 'scallions', 'cilantro', 'collard greens', 'callaloo leaves', 'wakame seaweed', 'nori seaweed', 'radishes', 'celery', 'bean sprouts', 'green papaya'],
+                      'Fruits': ['lemons', 'apples', 'rhubarb', 'plums', 'lime', 'mixed berries', 'avocados', 'korean pear', 'dried apricots', 'dried cranberries', 'dried fruits'],
+                      'Meat & Fish': ['salmon fillets', 'chicken breast', 'cod fillets', 'turkey breast', 'duck breast', 'pork tenderloin', 'veal shanks', 'kielbasa sausage', 'ground beef', 'ground pork', 'veal cutlets', 'beef brisket', 'lamb shoulder', 'beef short ribs', 'chorizo', 'chicken thighs', 'beef ribeye', 'chicken pieces', 'prosciutto', 'fresh clams', 'sea bass fillets', 'beef stew meat', 'pork chops', 'halibut fillets', 'trout fillets', 'swordfish steaks', 'rack of lamb', 'sole fillets', 'pork shoulder', 'beef roast', 'lamb shanks', 'lamb chops'],
+                      'Dairy & Eggs': ['eggs', 'butter', 'milk', 'heavy cream', 'mascarpone cheese', 'ricotta cheese', 'mozzarella cheese', 'parmesan cheese', 'gruyere cheese', 'goat cheese', 'feta cheese', 'cheddar cheese', 'sour cream', 'cream cheese', 'monterey jack cheese', 'soft-boiled eggs', 'hard-boiled eggs'],
+                      'Grains & Bread': ['wild rice', 'quinoa', 'pearl barley', 'brown rice', 'bulgur', 'basmati rice', 'arborio rice', 'pasta', 'lasagna sheets', 'bread', 'pie crust', 'puff pastry', 'breadcrumbs', 'flour', 'short grain rice', 'white rice', 'jasmine rice', 'couscous', 'rye bread', 'sourdough bread', 'naan bread', 'pita bread', 'injera bread', 'macaroni', 'spaetzle', 'ramen noodles', 'orzo pasta', 'egg noodles', 'corn tortillas', 'pierogi'],
+                      'Legumes & Nuts': ['chickpeas', 'green lentils', 'red lentils', 'white beans', 'black beans', 'pine nuts', 'pumpkin seeds', 'kidney beans', 'black lentils', 'mixed lentils', 'walnuts', 'peanuts', 'sliced almonds'],
+                      'Pantry & Condiments': ['olive oil', 'vegetable oil', 'salt', 'black pepper', 'nutmeg', 'curry powder', 'dijon mustard', 'balsamic vinegar', 'red wine vinegar', 'honey', 'sugar', 'tomato sauce', 'tomatoes (canned)', 'coconut cream', 'white wine', 'vegetable broth', 'coconut milk', 'soy sauce', 'sesame oil', 'teriyaki sauce', 'miso paste', 'garam masala', 'jerk seasoning', 'berbere spice', 'moroccan spice blend', 'enchilada sauce', 'bbq sauce', 'maple syrup', 'sumac', 'tomato salsa', 'fish sauce', 'gochujang', 'sesame seeds', 'lingonberry jam', 'red wine', 'beef broth', 'chicken broth', 'kimchi', 'sauerkraut', 'capers', 'kalamata olives', 'preserved lemons', 'tomato paste', 'gingersnap cookies', 'bay leaves', 'juniper berries', 'caraway seeds', 'cumin', 'turmeric', 'paprika', 'allspice', 'vanilla extract', 'baking powder', 'powdered sugar', 'brown sugar', 'palm sugar', 'scotch bonnet pepper', 'thai chilies', 'pickled beets']
+                  };
+
+                  // Aggregate all ingredients
+                  const ingredientsList = {};
+                  const categorizedIngredients = {};
+
+                  // Initialize categories
+                  Object.keys(categories).forEach(category => {
+                      categorizedIngredients[category] = {};
+                  });
+                  categorizedIngredients['Other'] = {};
+
+                  weekMeals.forEach(meal => {
+                      if (meal.ingredients) {
+                          Object.entries(meal.ingredients).forEach(([ingredient, amount]) => {
+                              if (ingredientsList[ingredient]) {
+                                  // If ingredient already exists, note multiple amounts
+                                  if (!ingredientsList[ingredient].includes(amount)) {
+                                      ingredientsList[ingredient] += ` + ${amount}`;
+                                  }
+                              } else {
+                                  ingredientsList[ingredient] = amount;
+                              }
+                          });
+                      }
+                  });
+
+                  // Categorize ingredients
+                  Object.entries(ingredientsList).forEach(([ingredient, amount]) => {
+                      let found = false;
+                      const lowerIngredient = ingredient.toLowerCase();
+                      
+                      for (const [category, keywords] of Object.entries(categories)) {
+                          if (keywords.some(keyword => lowerIngredient.includes(keyword.toLowerCase()) || keyword.toLowerCase().includes(lowerIngredient))) {
+                              categorizedIngredients[category][ingredient] = amount;
+                              found = true;
+                              break;
+                          }
+                      }
+                      
+                      if (!found) {
+                          categorizedIngredients['Other'][ingredient] = amount;
+                      }
+                  });
+
+                  // Generate HTML content
+                  let htmlContent = `
+                      <div class="shopping-week-info">
+                          <h2>Shopping List - Calendar Week ${calendarWeek}</h2>
+                          <p><strong>Generated on ${new Date().toLocaleDateString()}</strong></p>
+                      </div>
+
+                      <div class="shopping-meals-list">
+                          <h3>📋 This Week's Meals:</h3>
+                          ${weekMeals.map(meal => `
+                              <div class="shopping-meal-item">
+                                  <span>• ${meal.title}</span>
+                                  <span class="portion-count">(4 portions)</span>
+                              </div>
+                          `).join('')}
+                      </div>
+
+                      <h2 style="color: #27ae60; margin-bottom: 20px;">🥘 Shopping List by Category:</h2>
+                      ${Object.entries(categorizedIngredients)
+                          .filter(([category, ingredients]) => Object.keys(ingredients).length > 0)
+                          .map(([category, ingredients]) => `
+                              <div class="shopping-category-section">
+                                  <div class="shopping-category-title">${category}</div>
+                                  <div class="shopping-ingredients-list">
+                                      ${Object.entries(ingredients)
+                                          .sort(([a], [b]) => a.localeCompare(b))
+                                          .map(([ingredient, amount]) => `
+                                              <div class="shopping-ingredient">${ingredient}</div>
+                                              <div class="shopping-amount">${amount}</div>
+                                          `).join('')}
+                                  </div>
+                              </div>
+                          `).join('')}
+                  `;
+
+                  document.getElementById('shoppingListContent').innerHTML = htmlContent;
+              }
+
+              function downloadShoppingList() {
                   const weekMeals = allWeeklyMeals[currentWeek];
                   const calendarWeek = getCalendarWeekForMealWeek(currentWeek);
 
@@ -852,7 +1122,7 @@
               `).join('')}
 
           <p style="margin-top: 40px; font-size: 12px; color: #7f8c8d;">
-              Generated by Weekly Meal Planner | All ingredients calculated for 4 portions per meal
+              Generated by Martha's Meals | All ingredients calculated for 4 portions per meal
           </p>
       </body>
       </html>`;
@@ -862,14 +1132,14 @@
                   const url = URL.createObjectURL(blob);
                   const a = document.createElement('a');
                   a.href = url;
-                  a.download = `shopping-list-calendar-week-${calendarWeek}.html`;
+                  a.download = `marthas-meals-shopping-list-week-${calendarWeek}.html`;
                   document.body.appendChild(a);
                   a.click();
                   document.body.removeChild(a);
                   URL.revokeObjectURL(url);
 
                   // Show success message
-                  alert('Shopping list exported! The file will open in your browser where you can print it as PDF.');
+                  alert('Shopping list downloaded! The file will open in your browser where you can print it as PDF.');
               }
 
               function nextWeek() {
@@ -973,6 +1243,7 @@
                   document.getElementById('weekIndicator').style.display = Object.keys(allWeeklyMeals).length > 0 ? 'block' : 'none';
                   document.getElementById('favoritesContainer').style.display = 'none';
                   document.getElementById('bannedContainer').style.display = 'none';
+                  document.getElementById('shoppingListContainer').style.display = 'none';
               }
 
               function saveState() {
