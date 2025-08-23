@@ -42,7 +42,9 @@
       .prev-week-btn,
       .export-btn,
       .favorites-btn,
-      .banned-btn {
+      .banned-btn,
+      .save-btn,
+      .load-btn {
         background: linear-gradient(45deg, #3498db, #2980b9);
         color: white;
         border: none;
@@ -60,7 +62,9 @@
       .prev-week-btn:hover,
       .export-btn:hover,
       .favorites-btn:hover,
-      .banned-btn:hover {
+      .banned-btn:hover,
+      .save-btn:hover,
+      .load-btn:hover {
         transform: translateY(-2px);
         box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
         background: linear-gradient(45deg, #2980b9, #1f618d);
@@ -142,13 +146,25 @@
 
       .meals-container {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        grid-template-columns: repeat(4, 1fr);
         gap: 25px;
-        max-width: 1200px;
+        max-width: 1400px;
         width: 100%;
         opacity: 0;
         transform: translateY(20px);
         transition: all 0.5s ease;
+      }
+      
+      @media (max-width: 1200px) {
+        .meals-container {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      
+      @media (max-width: 768px) {
+        .meals-container {
+          grid-template-columns: 1fr;
+        }
       }
 
       .meals-container.show {
@@ -323,15 +339,30 @@
       >
         🚫 Banned
       </button>
+      <button
+        class="save-btn"
+        onclick="saveState()"
+        id="saveBtn"
+        style="display: none"
+      >
+        💾 Save State
+      </button>
+      <button
+        class="load-btn"
+        onclick="loadState()"
+        id="loadBtn"
+      >
+        📂 Load State
+      </button>
     </div>
 
     <div class="week-indicator" id="weekIndicator" style="display: none">
-      <span id="weekText">Week 1</span>
-      <span id="calendarWeek" class="calendar-week"></span>
+      <span id="weekText"></span>
     </div>
 
     <div class="meals-container" id="mealsContainer"></div>
 
+    <script src="meals.js"></script>
     <div class="list-container" id="favoritesContainer">
       <div class="list-header">
         <h2>❤️ Favorite Meals</h2>
@@ -353,373 +384,16 @@
     </div>
 
     <script>
-              const meatMeals = [
-                  {
-                      title: "Oven-Baked Salmon with asparagus, wild rice and lemon butter",
-                      image: "https://images.unsplash.com/photo-1485704686097-ed47f7263ca4?w=400&h=200&fit=crop",
-                      type: "meat",
-                      constraints: ["oven", "seasonal", "grain", "green_vegetable"],
-                      ingredients: {
-                          "Salmon fillets": "800g",
-                          "Fresh asparagus": "600g",
-                          "Wild rice": "320g",
-                          "Butter": "120g",
-                          "Lemons": "2 pieces",
-                          "Olive oil": "60ml",
-                          "Salt": "to taste",
-                          "Black pepper": "to taste"
-                      }
-                  },
-                  {
-                      title: "Roasted Chicken with pumpkin, quinoa and spinach salad",
-                      image: "https://images.unsplash.com/photo-1532550907401-a500c9a57435?w=400&h=200&fit=crop",
-                      type: "meat",
-                      constraints: ["oven", "seasonal", "grain", "salad", "green_vegetable"],
-                      ingredients: {
-                          "Chicken breast": "800g",
-                          "Pumpkin": "600g",
-                          "Quinoa": "320g",
-                          "Fresh spinach": "200g",
-                          "Olive oil": "80ml",
-                          "Garlic": "4 cloves",
-                          "Herbs (thyme, rosemary)": "20g",
-                          "Salt": "to taste",
-                          "Black pepper": "to taste"
-                      }
-                  },
-                  {
-                      title: "Herb-Crusted Cod with rhubarb compote, barley and arugula",
-                      image: "https://images.unsplash.com/photo-1559847844-d724ce463ce1?w=400&h=200&fit=crop",
-                      type: "meat",
-                      constraints: ["oven", "seasonal", "grain", "green_vegetable"],
-                      ingredients: {
-                          "Cod fillets": "800g",
-                          "Fresh rhubarb": "400g",
-                          "Pearl barley": "320g",
-                          "Arugula": "150g",
-                          "Fresh herbs (parsley, dill)": "30g",
-                          "Breadcrumbs": "100g",
-                          "Sugar": "50g",
-                          "Butter": "80g",
-                          "Vegetable broth": "800ml"
-                      }
-                  },
-                  {
-                      title: "Grilled Turkey with Brussels sprouts, brown rice and herbs",
-                      image: "https://images.unsplash.com/photo-1529042410759-befb1204b468?w=400&h=200&fit=crop",
-                      type: "meat",
-                      constraints: ["seasonal", "grain", "green_vegetable"],
-                      ingredients: {
-                          "Turkey breast": "800g",
-                          "Brussels sprouts": "600g",
-                          "Brown rice": "320g",
-                          "Fresh herbs (sage, thyme)": "25g",
-                          "Olive oil": "60ml",
-                          "Garlic": "3 cloves",
-                          "Salt": "to taste",
-                          "Black pepper": "to taste"
-                      }
-                  },
-                  {
-                      title: "Pan-Seared Duck with cabbage, wild rice and seasonal greens",
-                      image: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400&h=200&fit=crop",
-                      type: "meat",
-                      constraints: ["seasonal", "grain", "green_vegetable"],
-                      ingredients: {
-                          "Duck breast": "800g",
-                          "Red cabbage": "600g",
-                          "Wild rice": "320g",
-                          "Mixed seasonal greens": "200g",
-                          "Apples": "2 pieces",
-                          "Red wine vinegar": "60ml",
-                          "Honey": "40ml",
-                          "Salt": "to taste",
-                          "Black pepper": "to taste"
-                      }
-                  },
-                  {
-                      title: "Baked Pork Tenderloin with winter squash, bulgur and kale",
-                      image: "https://images.unsplash.com/photo-1544025162-d76694265947?w=400&h=200&fit=crop",
-                      type: "meat",
-                      constraints: ["oven", "seasonal", "grain", "green_vegetable"],
-                      ingredients: {
-                          "Pork tenderloin": "800g",
-                          "Winter squash": "600g",
-                          "Bulgur": "320g",
-                          "Fresh kale": "200g",
-                          "Onions": "2 pieces",
-                          "Vegetable broth": "600ml",
-                          "Olive oil": "60ml",
-                          "Garlic": "4 cloves",
-                          "Salt": "to taste",
-                          "Black pepper": "to taste"
-                      }
-                  }
-              ];
-
-              const vegetarianMeals = [
-                  {
-                      title: "Creamy Pasta with spinach, mascarpone and pine nuts",
-                      image: "https://images.unsplash.com/photo-1621996346565-e3dbc353d2e5?w=400&h=200&fit=crop",
-                      type: "vegetarian",
-                      constraints: ["pasta", "dairy", "green_vegetable"],
-                      ingredients: {
-                          "Pasta (penne or fusilli)": "400g",
-                          "Fresh spinach": "300g",
-                          "Mascarpone cheese": "250g",
-                          "Pine nuts": "80g",
-                          "Garlic": "3 cloves",
-                          "Parmesan cheese": "80g",
-                          "Olive oil": "60ml",
-                          "Salt": "to taste",
-                          "Black pepper": "to taste"
-                      }
-                  },
-                  {
-                      title: "Oven-Baked Lasagna with ricotta, spinach and seasonal herbs",
-                      image: "https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=400&h=200&fit=crop",
-                      type: "vegetarian",
-                      constraints: ["pasta", "oven", "dairy", "green_vegetable", "seasonal"],
-                      ingredients: {
-                          "Lasagna sheets": "300g",
-                          "Ricotta cheese": "500g",
-                          "Fresh spinach": "400g",
-                          "Mozzarella cheese": "300g",
-                          "Parmesan cheese": "150g",
-                          "Eggs": "2 pieces",
-                          "Seasonal herbs (basil, oregano)": "30g",
-                          "Tomato sauce": "600ml",
-                          "Olive oil": "40ml"
-                      }
-                  },
-                  {
-                      title: "Lentil and Arugula Salad with goat cheese and pumpkin seeds",
-                      image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=200&fit=crop",
-                      type: "vegetarian",
-                      constraints: ["beans_lentils", "salad", "dairy", "green_vegetable"],
-                      ingredients: {
-                          "Green lentils": "300g",
-                          "Arugula": "200g",
-                          "Goat cheese": "200g",
-                          "Pumpkin seeds": "60g",
-                          "Red onion": "1 piece",
-                          "Cherry tomatoes": "200g",
-                          "Olive oil": "80ml",
-                          "Balsamic vinegar": "40ml",
-                          "Dijon mustard": "15ml"
-                      }
-                  },
-                  {
-                      title: "Chickpea Curry with spinach, rice and coconut cream",
-                      image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=400&h=200&fit=crop",
-                      type: "vegetarian",
-                      constraints: ["beans_lentils", "grain", "green_vegetable"],
-                      ingredients: {
-                          "Chickpeas (canned)": "800g",
-                          "Fresh spinach": "300g",
-                          "Basmati rice": "320g",
-                          "Coconut cream": "400ml",
-                          "Onions": "2 pieces",
-                          "Garlic": "4 cloves",
-                          "Ginger": "30g",
-                          "Curry powder": "20g",
-                          "Tomatoes (canned)": "400g"
-                      }
-                  },
-                  {
-                      title: "Asparagus Quiche with gruyere cheese and mixed greens",
-                      image: "https://images.unsplash.com/photo-1571197192738-e735c3dd9659?w=400&h=200&fit=crop",
-                      type: "vegetarian",
-                      constraints: ["eggs", "dairy", "seasonal", "green_vegetable"],
-                      ingredients: {
-                          "Pie crust": "300g",
-                          "Fresh asparagus": "500g",
-                          "Gruyere cheese": "200g",
-                          "Eggs": "6 pieces",
-                          "Heavy cream": "300ml",
-                          "Mixed greens": "150g",
-                          "Butter": "50g",
-                          "Nutmeg": "pinch",
-                          "Salt": "to taste",
-                          "Black pepper": "to taste"
-                      }
-                  },
-                  {
-                      title: "Seasonal Frittata with spring vegetables and herbs",
-                      image: "https://images.unsplash.com/photo-1571197192738-e735c3dd9659?w=400&h=200&fit=crop",
-                      type: "vegetarian",
-                      constraints: ["eggs", "seasonal", "green_vegetable", "oven"],
-                      ingredients: {
-                          "Eggs": "8 pieces",
-                          "Spring vegetables (peas, asparagus)": "400g",
-                          "Fresh herbs (chives, parsley)": "30g",
-                          "Onions": "1 piece",
-                          "Olive oil": "60ml",
-                          "Parmesan cheese": "80g",
-                          "Salt": "to taste",
-                          "Black pepper": "to taste"
-                      }
-                  },
-                  {
-                      title: "White Bean Salad with rucola, feta and pumpkin",
-                      image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=200&fit=crop",
-                      type: "vegetarian",
-                      constraints: ["beans_lentils", "salad", "dairy", "seasonal", "green_vegetable"],
-                      ingredients: {
-                          "White beans (canned)": "800g",
-                          "Rucola (arugula)": "200g",
-                          "Feta cheese": "200g",
-                          "Roasted pumpkin": "300g",
-                          "Red onion": "1 piece",
-                          "Olive oil": "80ml",
-                          "Lemon": "2 pieces",
-                          "Fresh herbs (parsley)": "20g"
-                      }
-                  },
-                  {
-                      title: "Baked Eggplant with lentils, mozzarella and basil",
-                      image: "https://images.unsplash.com/photo-1572441713132-51c75654db73?w=400&h=200&fit=crop",
-                      type: "vegetarian",
-                      constraints: ["oven", "beans_lentils", "dairy", "green_vegetable"],
-                      ingredients: {
-                          "Eggplants": "800g",
-                          "Red lentils": "250g",
-                          "Mozzarella cheese": "300g",
-                          "Fresh basil": "30g",
-                          "Tomato sauce": "500ml",
-                          "Onions": "2 pieces",
-                          "Garlic": "4 cloves",
-                          "Olive oil": "80ml",
-                          "Vegetable broth": "400ml"
-                      }
-                  },
-                  {
-                      title: "Mushroom Risotto with parmesan, peas and seasonal herbs",
-                      image: "https://images.unsplash.com/photo-1476124369491-e7addf5db371?w=400&h=200&fit=crop",
-                      type: "vegetarian",
-                      constraints: ["grain", "dairy", "green_vegetable", "seasonal"],
-                      ingredients: {
-                          "Arborio rice": "320g",
-                          "Mixed mushrooms": "400g",
-                          "Parmesan cheese": "150g",
-                          "Fresh peas": "200g",
-                          "Seasonal herbs (thyme, parsley)": "25g",
-                          "Vegetable broth": "1200ml",
-                          "White wine": "200ml",
-                          "Onions": "1 piece",
-                          "Butter": "80g"
-                      }
-                  },
-                  {
-                      title: "Quinoa Salad with seasonal vegetables and herb dressing",
-                      image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=200&fit=crop",
-                      type: "vegetarian",
-                      constraints: ["grain", "salad", "seasonal", "green_vegetable"],
-                      ingredients: {
-                          "Quinoa": "320g",
-                          "Seasonal vegetables (bell peppers, zucchini)": "600g",
-                          "Mixed greens": "200g",
-                          "Fresh herbs (mint, parsley)": "40g",
-                          "Olive oil": "100ml",
-                          "Lemon": "2 pieces",
-                          "Garlic": "2 cloves",
-                          "Cucumber": "2 pieces"
-                      }
-                  },
-                  {
-                      title: "Spinach and Cheese Soufflé with seasonal root vegetables",
-                      image: "https://images.unsplash.com/photo-1571197192738-e735c3dd9659?w=400&h=200&fit=crop",
-                      type: "vegetarian",
-                      constraints: ["eggs", "dairy", "green_vegetable", "seasonal", "oven"],
-                      ingredients: {
-                          "Fresh spinach": "400g",
-                          "Gruyere cheese": "200g",
-                          "Eggs": "6 pieces",
-                          "Milk": "300ml",
-                          "Butter": "80g",
-                          "Flour": "60g",
-                          "Seasonal root vegetables": "500g",
-                          "Nutmeg": "pinch",
-                          "Salt": "to taste"
-                      }
-                  },
-                  {
-                      title: "Pasta Primavera with asparagus, peas and cream sauce",
-                      image: "https://images.unsplash.com/photo-1621996346565-e3dbc353d2e5?w=400&h=200&fit=crop",
-                      type: "vegetarian",
-                      constraints: ["pasta", "seasonal", "dairy", "green_vegetable"],
-                      ingredients: {
-                          "Pasta (linguine or fettuccine)": "400g",
-                          "Fresh asparagus": "300g",
-                          "Fresh peas": "200g",
-                          "Heavy cream": "300ml",
-                          "Parmesan cheese": "100g",
-                          "Butter": "60g",
-                          "Garlic": "3 cloves",
-                          "Fresh herbs (basil, parsley)": "25g"
-                      }
-                  },
-                  {
-                      title: "Red Lentil Soup with spinach, bread and seasonal herbs",
-                      image: "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400&h=200&fit=crop",
-                      type: "vegetarian",
-                      constraints: ["beans_lentils", "grain", "green_vegetable", "seasonal"],
-                      ingredients: {
-                          "Red lentils": "300g",
-                          "Fresh spinach": "250g",
-                          "Bread (for serving)": "8 slices",
-                          "Seasonal herbs (thyme, bay leaves)": "20g",
-                          "Onions": "2 pieces",
-                          "Carrots": "3 pieces",
-                          "Vegetable broth": "1200ml",
-                          "Olive oil": "60ml",
-                          "Garlic": "4 cloves"
-                      }
-                  },
-                  {
-                      title: "Baked Stuffed Peppers with quinoa, beans and cheese",
-                      image: "https://images.unsplash.com/photo-1572441713132-51c75654db73?w=400&h=200&fit=crop",
-                      type: "vegetarian",
-                      constraints: ["oven", "grain", "beans_lentils", "dairy"],
-                      ingredients: {
-                          "Bell peppers": "8 pieces",
-                          "Quinoa": "250g",
-                          "Black beans (canned)": "400g",
-                          "Cheddar cheese": "200g",
-                          "Onions": "2 pieces",
-                          "Tomatoes": "3 pieces",
-                          "Vegetable broth": "500ml",
-                          "Olive oil": "60ml",
-                          "Garlic": "3 cloves"
-                      }
-                  },
-                  {
-                      title: "Seasonal Vegetable Tart with eggs, cheese and herbs",
-                      image: "https://images.unsplash.com/photo-1571197192738-e735c3dd9659?w=400&h=200&fit=crop",
-                      type: "vegetarian",
-                      constraints: ["eggs", "dairy", "seasonal", "oven", "green_vegetable"],
-                      ingredients: {
-                          "Puff pastry": "300g",
-                          "Seasonal vegetables (zucchini, tomatoes)": "600g",
-                          "Eggs": "4 pieces",
-                          "Goat cheese": "200g",
-                          "Fresh herbs (rosemary, thyme)": "25g",
-                          "Heavy cream": "200ml",
-                          "Olive oil": "40ml",
-                          "Mixed greens": "100g"
-                      }
-                  }
-              ];
 
               let currentWeek = 0;
               let weeklyMeals = [];
               let usedMeatMeals = [];
               let usedVegetarianMeals = [];
-              let startCalendarWeek = 1;
-              let allWeeklyMeals = []; // Store all 4 weeks of meals
+              let allWeeklyMeals = {}; // Store meals for all weeks
               let favorites = [];
               let banned = [];
               let mealRatings = {}; // Store ratings for each meal
+              let startingCalendarWeek = getCurrentWeekNumber(); // Track when meal planning started
 
               function getCurrentWeekNumber() {
                   const now = new Date();
@@ -761,7 +435,7 @@
                   let priorityMeatMeals = availableMeatMeals;
                   let priorityVegetarianMeals = availableVegetarianMeals;
 
-                  if (allWeeklyMeals.length >= 4) {
+                  if (Object.keys(allWeeklyMeals).length >= 4) {
                       // After 4 weeks, prioritize favorites
                       const favoriteMeatMeals = availableMeatMeals.filter(meal => favorites.includes(meal.title));
                       const favoriteVegetarianMeals = availableVegetarianMeals.filter(meal => favorites.includes(meal.title));
@@ -790,20 +464,33 @@
                   const selectedMeatMeal = shuffleArray(priorityMeatMeals)[0];
                   usedMeatMeals.push(selectedMeatMeal.title);
 
-                  // Track which constraints are already covered by the meat meal
+                  // Track which constraints and regions are already covered by the meat meal
                   let coveredConstraints = [...selectedMeatMeal.constraints];
+                  let coveredRegions = [selectedMeatMeal.region];
                   let selectedMeals = [selectedMeatMeal];
 
-                  // Select 3 vegetarian meals that cover remaining constraints
+                  // Select 3 vegetarian meals that cover remaining constraints and ensure regional diversity
                   let remainingVegetarianMeals = [...priorityVegetarianMeals];
 
                   for (let i = 0; i < 3; i++) {
                       // Find uncovered required constraints
                       const uncoveredConstraints = requiredConstraints.filter(c => !coveredConstraints.includes(c));
+                      
+                      // Prioritize meals from uncovered regions to ensure at least 2 regions per week
+                      const uncoveredRegionMeals = remainingVegetarianMeals.filter(meal =>
+                          !coveredRegions.includes(meal.region)
+                      );
+                      
+                      let candidateMeals = remainingVegetarianMeals;
+                      
+                      // If we have less than 2 regions covered and there are uncovered region meals, prioritize them
+                      if (coveredRegions.length < 2 && uncoveredRegionMeals.length > 0) {
+                          candidateMeals = uncoveredRegionMeals;
+                      }
 
                       if (uncoveredConstraints.length > 0) {
                           // Prioritize meals that cover uncovered constraints
-                          const constraintPriorityMeals = remainingVegetarianMeals.filter(meal =>
+                          const constraintPriorityMeals = candidateMeals.filter(meal =>
                               meal.constraints.some(c => uncoveredConstraints.includes(c))
                           );
 
@@ -818,17 +505,23 @@
                               const selectedMeal = constraintPriorityMeals[0];
                               selectedMeals.push(selectedMeal);
                               coveredConstraints.push(...selectedMeal.constraints);
+                              if (!coveredRegions.includes(selectedMeal.region)) {
+                                  coveredRegions.push(selectedMeal.region);
+                              }
                               usedVegetarianMeals.push(selectedMeal.title);
                               remainingVegetarianMeals = remainingVegetarianMeals.filter(m => m.title !== selectedMeal.title);
                               continue;
                           }
                       }
 
-                      // If no priority meals or all constraints covered, select randomly
-                      if (remainingVegetarianMeals.length > 0) {
-                          const randomMeal = shuffleArray(remainingVegetarianMeals)[0];
+                      // If no constraint priority meals, select from candidate meals
+                      if (candidateMeals.length > 0) {
+                          const randomMeal = shuffleArray(candidateMeals)[0];
                           selectedMeals.push(randomMeal);
                           coveredConstraints.push(...randomMeal.constraints);
+                          if (!coveredRegions.includes(randomMeal.region)) {
+                              coveredRegions.push(randomMeal.region);
+                          }
                           usedVegetarianMeals.push(randomMeal.title);
                           remainingVegetarianMeals = remainingVegetarianMeals.filter(m => m.title !== randomMeal.title);
                       }
@@ -924,15 +617,15 @@
 
               function updateWeekDisplay() {
                   const calendarWeek = getCalendarWeekForMealWeek(currentWeek);
-                  document.getElementById('weekText').textContent = `Week ${currentWeek + 1}`;
-                  document.getElementById('calendarWeek').textContent = `Calendar Week ${calendarWeek}`;
+                  document.getElementById('weekText').textContent = `Calendar Week ${calendarWeek}`;
               }
 
               function generateMeals() {
                   currentWeek = 0;
+                  startingCalendarWeek = getCurrentWeekNumber();
                   usedMeatMeals = [];
                   usedVegetarianMeals = [];
-                  allWeeklyMeals = []; // Reset all weekly meals
+                  allWeeklyMeals = {}; // Reset all weekly meals
 
                   const selectedMeals = generateWeeklyMeals();
                   allWeeklyMeals[0] = selectedMeals; // Store week 0 meals
@@ -946,6 +639,7 @@
                   document.getElementById('favoritesBtn').style.display = favorites.length > 0 ? 'inline-block' : 'none';
                   document.getElementById('bannedBtn').style.display = banned.length > 0 ? 'inline-block' : 'none';
                   document.getElementById('surpriseBtn').style.display = favorites.length >= 4 ? 'inline-block' : 'none';
+                  document.getElementById('saveBtn').style.display = 'inline-block';
                   updateWeekDisplay();
               }
 
@@ -956,7 +650,8 @@
                   }
 
                   currentWeek = 0;
-                  allWeeklyMeals = [];
+                  startingCalendarWeek = getCurrentWeekNumber();
+                  allWeeklyMeals = {};
 
                   // Get all favorite meals
                   const allMeals = [...meatMeals, ...vegetarianMeals];
@@ -981,10 +676,11 @@
                   displayMeals(selectedMeals);
 
                   // Show navigation buttons
-                  document.getElementById('nextWeekBtn').style.display = 'none';
+                  document.getElementById('nextWeekBtn').style.display = 'inline-block';
                   document.getElementById('prevWeekBtn').style.display = 'none';
                   document.getElementById('weekIndicator').style.display = 'block';
                   document.getElementById('exportBtn').style.display = 'inline-block';
+                  document.getElementById('saveBtn').style.display = 'inline-block';
                   updateWeekDisplay();
               }
 
@@ -997,8 +693,26 @@
                   const weekMeals = allWeeklyMeals[currentWeek];
                   const calendarWeek = getCalendarWeekForMealWeek(currentWeek);
 
+                  // Define ingredient categories in typical supermarket order
+                  const categories = {
+                      'Fresh Vegetables & Herbs': ['asparagus', 'spinach', 'arugula', 'rucola', 'kale', 'brussels sprouts', 'cabbage', 'peas', 'broccoli', 'zucchini', 'bell peppers', 'eggplants', 'cucumber', 'tomatoes', 'cherry tomatoes', 'onions', 'red onion', 'garlic', 'ginger', 'carrots', 'pumpkin', 'winter squash', 'seasonal vegetables', 'spring vegetables', 'seasonal root vegetables', 'mixed seasonal greens', 'mixed greens', 'basil', 'parsley', 'chives', 'thyme', 'rosemary', 'sage', 'oregano', 'dill', 'mint', 'herbs', 'seasonal herbs', 'fresh herbs', 'bok choy', 'scallions', 'cilantro', 'collard greens', 'callaloo leaves', 'wakame seaweed', 'nori seaweed', 'radishes', 'celery', 'bean sprouts', 'green papaya'],
+                      'Fruits': ['lemons', 'apples', 'rhubarb', 'plums', 'lime', 'mixed berries', 'avocados', 'korean pear', 'dried apricots', 'dried cranberries', 'dried fruits'],
+                      'Meat & Fish': ['salmon fillets', 'chicken breast', 'cod fillets', 'turkey breast', 'duck breast', 'pork tenderloin', 'veal shanks', 'kielbasa sausage', 'ground beef', 'ground pork', 'veal cutlets', 'beef brisket', 'lamb shoulder', 'beef short ribs', 'chorizo', 'chicken thighs', 'beef ribeye', 'chicken pieces', 'prosciutto', 'fresh clams', 'sea bass fillets', 'beef stew meat', 'pork chops', 'halibut fillets', 'trout fillets', 'swordfish steaks', 'rack of lamb', 'sole fillets', 'pork shoulder', 'beef roast', 'lamb shanks', 'lamb chops'],
+                      'Dairy & Eggs': ['eggs', 'butter', 'milk', 'heavy cream', 'mascarpone cheese', 'ricotta cheese', 'mozzarella cheese', 'parmesan cheese', 'gruyere cheese', 'goat cheese', 'feta cheese', 'cheddar cheese', 'sour cream', 'cream cheese', 'monterey jack cheese', 'soft-boiled eggs', 'hard-boiled eggs'],
+                      'Grains & Bread': ['wild rice', 'quinoa', 'pearl barley', 'brown rice', 'bulgur', 'basmati rice', 'arborio rice', 'pasta', 'lasagna sheets', 'bread', 'pie crust', 'puff pastry', 'breadcrumbs', 'flour', 'short grain rice', 'white rice', 'jasmine rice', 'couscous', 'rye bread', 'sourdough bread', 'naan bread', 'pita bread', 'injera bread', 'macaroni', 'spaetzle', 'ramen noodles', 'orzo pasta', 'egg noodles', 'corn tortillas', 'pierogi'],
+                      'Legumes & Nuts': ['chickpeas', 'green lentils', 'red lentils', 'white beans', 'black beans', 'pine nuts', 'pumpkin seeds', 'kidney beans', 'black lentils', 'mixed lentils', 'walnuts', 'peanuts', 'sliced almonds'],
+                      'Pantry & Condiments': ['olive oil', 'vegetable oil', 'salt', 'black pepper', 'nutmeg', 'curry powder', 'dijon mustard', 'balsamic vinegar', 'red wine vinegar', 'honey', 'sugar', 'tomato sauce', 'tomatoes (canned)', 'coconut cream', 'white wine', 'vegetable broth', 'coconut milk', 'soy sauce', 'sesame oil', 'teriyaki sauce', 'miso paste', 'garam masala', 'jerk seasoning', 'berbere spice', 'moroccan spice blend', 'enchilada sauce', 'bbq sauce', 'maple syrup', 'sumac', 'tomato salsa', 'fish sauce', 'gochujang', 'sesame seeds', 'lingonberry jam', 'red wine', 'beef broth', 'chicken broth', 'kimchi', 'sauerkraut', 'capers', 'kalamata olives', 'preserved lemons', 'tomato paste', 'gingersnap cookies', 'bay leaves', 'juniper berries', 'caraway seeds', 'cumin', 'turmeric', 'paprika', 'allspice', 'vanilla extract', 'baking powder', 'powdered sugar', 'brown sugar', 'palm sugar', 'scotch bonnet pepper', 'thai chilies', 'pickled beets']
+                  };
+
                   // Aggregate all ingredients
                   const ingredientsList = {};
+                  const categorizedIngredients = {};
+
+                  // Initialize categories
+                  Object.keys(categories).forEach(category => {
+                      categorizedIngredients[category] = {};
+                  });
+                  categorizedIngredients['Other'] = {};
 
                   weekMeals.forEach(meal => {
                       if (meal.ingredients) {
@@ -1012,6 +726,24 @@
                                   ingredientsList[ingredient] = amount;
                               }
                           });
+                      }
+                  });
+
+                  // Categorize ingredients
+                  Object.entries(ingredientsList).forEach(([ingredient, amount]) => {
+                      let found = false;
+                      const lowerIngredient = ingredient.toLowerCase();
+                      
+                      for (const [category, keywords] of Object.entries(categories)) {
+                          if (keywords.some(keyword => lowerIngredient.includes(keyword.toLowerCase()) || keyword.toLowerCase().includes(lowerIngredient))) {
+                              categorizedIngredients[category][ingredient] = amount;
+                              found = true;
+                              break;
+                          }
+                      }
+                      
+                      if (!found) {
+                          categorizedIngredients['Other'][ingredient] = amount;
                       }
                   });
 
@@ -1035,6 +767,14 @@
               h2 {
                   color: #27ae60;
                   margin-top: 30px;
+                  margin-bottom: 15px;
+              }
+              h3 {
+                  color: #3498db;
+                  margin-top: 25px;
+                  margin-bottom: 10px;
+                  border-left: 4px solid #3498db;
+                  padding-left: 10px;
               }
               .meal-list {
                   background: #f8f9fa;
@@ -1045,12 +785,24 @@
               .meal-item {
                   margin: 8px 0;
                   font-weight: bold;
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+              }
+              .portion-count {
+                  color: #e67e22;
+                  font-size: 14px;
+                  font-weight: normal;
+              }
+              .category-section {
+                  margin-bottom: 25px;
               }
               .ingredients-list {
                   display: grid;
                   grid-template-columns: 1fr auto;
                   gap: 10px 20px;
                   max-width: 600px;
+                  margin-bottom: 20px;
               }
               .ingredient {
                   border-bottom: 1px dotted #ccc;
@@ -1069,23 +821,35 @@
           </style>
       </head>
       <body>
-          <h1>🛒 Shopping List - Week ${currentWeek + 1}</h1>
+          <h1>🛒 Shopping List - Calendar Week ${calendarWeek}</h1>
           <p><strong>Calendar Week ${calendarWeek}</strong> | Generated on ${new Date().toLocaleDateString()}</p>
 
           <div class="meal-list">
               <h2>📋 This Week's Meals:</h2>
-              ${weekMeals.map(meal => `<div class="meal-item">• ${meal.title}</div>`).join('')}
+              ${weekMeals.map(meal => `
+                  <div class="meal-item">
+                      <span>• ${meal.title}</span>
+                      <span class="portion-count">(4 portions)</span>
+                  </div>
+              `).join('')}
           </div>
 
-          <h2>🥘 Shopping List (Ingredients for 4 portions each meal):</h2>
-          <div class="ingredients-list">
-              ${Object.entries(ingredientsList)
-                  .sort(([a], [b]) => a.localeCompare(b))
-                  .map(([ingredient, amount]) => `
-                      <div class="ingredient">${ingredient}</div>
-                      <div class="amount">${amount}</div>
-                  `).join('')}
-          </div>
+          <h2>🥘 Shopping List by Category:</h2>
+          ${Object.entries(categorizedIngredients)
+              .filter(([category, ingredients]) => Object.keys(ingredients).length > 0)
+              .map(([category, ingredients]) => `
+                  <div class="category-section">
+                      <h3>${category}</h3>
+                      <div class="ingredients-list">
+                          ${Object.entries(ingredients)
+                              .sort(([a], [b]) => a.localeCompare(b))
+                              .map(([ingredient, amount]) => `
+                                  <div class="ingredient">${ingredient}</div>
+                                  <div class="amount">${amount}</div>
+                              `).join('')}
+                      </div>
+                  </div>
+              `).join('')}
 
           <p style="margin-top: 40px; font-size: 12px; color: #7f8c8d;">
               Generated by Weekly Meal Planner | All ingredients calculated for 4 portions per meal
@@ -1098,7 +862,7 @@
                   const url = URL.createObjectURL(blob);
                   const a = document.createElement('a');
                   a.href = url;
-                  a.download = `shopping-list-week-${currentWeek + 1}-calendar-${calendarWeek}.html`;
+                  a.download = `shopping-list-calendar-week-${calendarWeek}.html`;
                   document.body.appendChild(a);
                   a.click();
                   document.body.removeChild(a);
@@ -1109,10 +873,11 @@
               }
 
               function nextWeek() {
-                  currentWeek = (currentWeek + 1) % 4;
+                  currentWeek++;
 
                   if (!allWeeklyMeals[currentWeek]) {
-                      if (currentWeek === 0) {
+                      // Reset used meals every 4 weeks to ensure variety
+                      if (currentWeek % 4 === 0) {
                           usedMeatMeals = [];
                           usedVegetarianMeals = [];
                       }
@@ -1123,7 +888,7 @@
                   displayMeals(allWeeklyMeals[currentWeek]);
 
                   document.getElementById('prevWeekBtn').style.display = 'inline-block';
-                  document.getElementById('nextWeekBtn').style.display = currentWeek < 3 ? 'inline-block' : 'none';
+                  document.getElementById('nextWeekBtn').style.display = 'inline-block';
                   updateWeekDisplay();
               }
 
@@ -1205,9 +970,100 @@
               function showMainView() {
                   document.getElementById('mealsContainer').style.display = '';
                   document.querySelector('.button-container').style.display = '';
-                  document.getElementById('weekIndicator').style.display = allWeeklyMeals.length > 0 ? 'block' : 'none';
+                  document.getElementById('weekIndicator').style.display = Object.keys(allWeeklyMeals).length > 0 ? 'block' : 'none';
                   document.getElementById('favoritesContainer').style.display = 'none';
                   document.getElementById('bannedContainer').style.display = 'none';
+              }
+
+              function saveState() {
+                  const state = {
+                      currentWeek,
+                      allWeeklyMeals,
+                      usedMeatMeals,
+                      usedVegetarianMeals,
+                      favorites,
+                      banned,
+                      mealRatings,
+                      startingCalendarWeek,
+                      saveDate: new Date().toISOString()
+                  };
+                  
+                  const stateString = JSON.stringify(state, null, 2);
+                  const blob = new Blob([stateString], { type: 'application/json' });
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement('a');
+                  a.href = url;
+                  a.download = `meal-planner-state-${new Date().toISOString().split('T')[0]}.json`;
+                  document.body.appendChild(a);
+                  a.click();
+                  document.body.removeChild(a);
+                  URL.revokeObjectURL(url);
+                  
+                  alert('State saved successfully! You can now load this state anytime.');
+              }
+
+              function loadState() {
+                  const input = document.createElement('input');
+                  input.type = 'file';
+                  input.accept = '.json';
+                  input.style.display = 'none';
+                  
+                  input.onchange = function(event) {
+                      const file = event.target.files[0];
+                      if (!file) return;
+                      
+                      const reader = new FileReader();
+                      reader.onload = function(e) {
+                          try {
+                              const state = JSON.parse(e.target.result);
+                              
+                              // Validate the state object
+                              if (!state.allWeeklyMeals || typeof state.currentWeek !== 'number') {
+                                  throw new Error('Invalid state file');
+                              }
+                              
+                              // Restore state
+                              currentWeek = state.currentWeek || 0;
+                              allWeeklyMeals = state.allWeeklyMeals || {};
+                              usedMeatMeals = state.usedMeatMeals || [];
+                              usedVegetarianMeals = state.usedVegetarianMeals || [];
+                              favorites = state.favorites || [];
+                              banned = state.banned || [];
+                              mealRatings = state.mealRatings || {};
+                              startingCalendarWeek = state.startingCalendarWeek || getCurrentWeekNumber();
+                              
+                              // Update display
+                              if (allWeeklyMeals[currentWeek]) {
+                                  displayMeals(allWeeklyMeals[currentWeek]);
+                                  
+                                  // Show navigation buttons
+                                  document.getElementById('nextWeekBtn').style.display = 'inline-block';
+                                  document.getElementById('prevWeekBtn').style.display = currentWeek > 0 ? 'inline-block' : 'none';
+                                  document.getElementById('weekIndicator').style.display = 'block';
+                                  document.getElementById('exportBtn').style.display = 'inline-block';
+                                  document.getElementById('favoritesBtn').style.display = favorites.length > 0 ? 'inline-block' : 'none';
+                                  document.getElementById('bannedBtn').style.display = banned.length > 0 ? 'inline-block' : 'none';
+                                  document.getElementById('surpriseBtn').style.display = favorites.length >= 4 ? 'inline-block' : 'none';
+                                  document.getElementById('saveBtn').style.display = 'inline-block';
+                                  
+                                  updateWeekDisplay();
+                              }
+                              
+                              const saveDate = state.saveDate ? new Date(state.saveDate).toLocaleDateString() : 'Unknown date';
+                              alert(`State loaded successfully! (Saved on ${saveDate})`);
+                              
+                          } catch (error) {
+                              alert('Error loading state file. Please make sure it\'s a valid meal planner state file.');
+                              console.error('Load state error:', error);
+                          }
+                      };
+                      
+                      reader.readAsText(file);
+                  };
+                  
+                  document.body.appendChild(input);
+                  input.click();
+                  document.body.removeChild(input);
               }
     </script>
   </body>
