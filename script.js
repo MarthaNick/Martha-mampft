@@ -210,8 +210,8 @@ function rateMeal(mealTitle, rating) {
     updateRatingButtons();
 
     // Show favorites/banned buttons
-    document.getElementById('favoritesBtn').style.display = favorites.length > 0 ? 'inline-block' : 'none';
-    document.getElementById('bannedBtn').style.display = banned.length > 0 ? 'inline-block' : 'none';
+    document.getElementById('favoritesBtn').style.display = 'inline-block';
+    document.getElementById('bannedBtn').style.display = 'inline-block';
 }
 
 function updateRatingButtons() {
@@ -233,6 +233,20 @@ function updateWeekDisplay() {
     document.getElementById('weekText').textContent = `Calendar Week ${calendarWeek}`;
 }
 
+function updateButtonStates() {
+    const prevBtn = document.getElementById('prevWeekBtn');
+    
+    // Always show previous week button
+    prevBtn.style.display = 'inline-block';
+    
+    // Enable/disable based on current week
+    if (currentWeek <= 0) {
+        prevBtn.disabled = true;
+    } else {
+        prevBtn.disabled = false;
+    }
+}
+
 function newRandomization() {
     // Generate 4 random meals for the current week honoring constraints
     const selectedMeals = generateWeeklyMeals();
@@ -240,16 +254,15 @@ function newRandomization() {
     displayMeals(selectedMeals);
     // Reveal controls
     document.getElementById('nextWeekBtn').style.display = 'inline-block';
-    document.getElementById('prevWeekBtn').style.display = currentWeek > 0 ? 'inline-block' : 'none';
     document.getElementById('weekIndicator').style.display = 'block';
     document.getElementById('exportBtn').style.display = 'inline-block';
     document.getElementById('favoritesBtn').style.display = 'inline-block';
     document.getElementById('bannedBtn').style.display = 'inline-block';
-    document.getElementById('surpriseBtn').style.display = 'inline-block';
     document.getElementById('saveBtn').style.display = 'inline-block';
     document.getElementById('randomizeBtn').style.display = 'inline-block';
     document.getElementById('weekIndicator').style.display = 'block';
     updateWeekDisplay();
+    updateButtonStates();
 }
 
 function generateMeals() {
@@ -271,6 +284,13 @@ document.addEventListener('DOMContentLoaded', () => {
     usedMeatMeals = [];
     usedVegetarianMeals = [];
     allWeeklyMeals = {};
+    
+    // Show week indicator and update button states immediately
+    document.getElementById('weekIndicator').style.display = 'block';
+    document.getElementById('prevWeekBtn').style.display = 'inline-block';
+    updateWeekDisplay();
+    updateButtonStates();
+    
     newRandomization();
 });
 
@@ -308,12 +328,12 @@ function surpriseMe() {
 
     // Show navigation buttons
     document.getElementById('nextWeekBtn').style.display = 'inline-block';
-    document.getElementById('prevWeekBtn').style.display = currentWeek > 0 ? 'inline-block' : 'none';
     document.getElementById('randomizeBtn').style.display = 'inline-block';
     document.getElementById('weekIndicator').style.display = 'block';
     document.getElementById('exportBtn').style.display = 'inline-block';
     document.getElementById('saveBtn').style.display = 'inline-block';
     updateWeekDisplay();
+    updateButtonStates();
 }
 
 function showShoppingList() {
@@ -763,10 +783,10 @@ function nextWeek() {
 
     displayMeals(allWeeklyMeals[currentWeek]);
 
-    document.getElementById('prevWeekBtn').style.display = 'inline-block';
     document.getElementById('nextWeekBtn').style.display = 'inline-block';
     document.getElementById('randomizeBtn').style.display = 'inline-block';
     updateWeekDisplay();
+    updateButtonStates();
 }
 
 function previousWeek() {
@@ -774,28 +794,18 @@ function previousWeek() {
         currentWeek--;
         displayMeals(allWeeklyMeals[currentWeek]);
 
-        document.getElementById('prevWeekBtn').style.display = currentWeek > 0 ? 'inline-block' : 'none';
         document.getElementById('nextWeekBtn').style.display = 'inline-block';
         document.getElementById('randomizeBtn').style.display = 'inline-block';
         updateWeekDisplay();
+        updateButtonStates();
     }
 }
 
 function showFavorites() {
-    if (favorites.length === 0) {
-        alert('No favorite meals yet! Rate some meals with 👍 to add them to favorites.');
-        return;
-    }
-
     showListView('favorites');
 }
 
 function showBanned() {
-    if (banned.length === 0) {
-        alert('No banned meals yet! Rate some meals with 👎 to ban them.');
-        return;
-    }
-
     showListView('banned');
 }
 
@@ -820,29 +830,46 @@ function showListView(type) {
     const container = document.getElementById(gridId);
 
     container.innerHTML = '';
-    targetMeals.forEach(meal => {
-        const mealCard = document.createElement('div');
-        mealCard.className = 'meal-card';
-
-        const rating = mealRatings[meal.title] || '';
-        const thumbUpActive = rating === 'up' ? 'active' : '';
-        const thumbDownActive = rating === 'down' ? 'active' : '';
-
-        mealCard.innerHTML = `
-            <img src="${meal.image}" alt="${meal.title}" class="meal-image">
-            <div class="meal-title">${getFlagForTitle(meal.title)} ${meal.title}</div>
-            <div class="rating-buttons">
-                <button class="thumb-btn thumb-up ${thumbUpActive}" onclick="rateMeal('${meal.title}', 'up')">
-                    👍
-                </button>
-                <button class="thumb-btn thumb-down ${thumbDownActive}" onclick="rateMeal('${meal.title}', 'down')">
-                    👎
-                </button>
+    
+    if (targetMeals.length === 0) {
+        // Show empty state message
+        const emptyMessage = document.createElement('div');
+        emptyMessage.className = 'empty-list-message';
+        emptyMessage.innerHTML = `
+            <div class="empty-list-content">
+                <div class="empty-list-icon">${type === 'favorites' ? '❤️' : '🚫'}</div>
+                <h3>No ${type === 'favorites' ? 'Favorite' : 'Banned'} Meals Yet</h3>
+                <p>${type === 'favorites' 
+                    ? 'Rate some meals with 👍 to add them to your favorites!' 
+                    : 'Rate some meals with 👎 to add them to your banned list!'}</p>
             </div>
         `;
+        container.appendChild(emptyMessage);
+    } else {
+        targetMeals.forEach(meal => {
+            const mealCard = document.createElement('div');
+            mealCard.className = 'meal-card';
 
-        container.appendChild(mealCard);
-    });
+            const rating = mealRatings[meal.title] || '';
+            const thumbUpActive = rating === 'up' ? 'active' : '';
+            const thumbDownActive = rating === 'down' ? 'active' : '';
+
+            mealCard.innerHTML = `
+                <img src="${meal.image}" alt="${meal.title}" class="meal-image">
+                <div class="meal-title">${getFlagForTitle(meal.title)} ${meal.title}</div>
+                <div class="rating-buttons">
+                    <button class="thumb-btn thumb-up ${thumbUpActive}" onclick="rateMeal('${meal.title}', 'up')">
+                        👍
+                    </button>
+                    <button class="thumb-btn thumb-down ${thumbDownActive}" onclick="rateMeal('${meal.title}', 'down')">
+                        👎
+                    </button>
+                </div>
+            `;
+
+            container.appendChild(mealCard);
+        });
+    }
 }
 
 function showMainView() {
@@ -917,15 +944,14 @@ function loadState() {
                     
                     // Show navigation buttons
                     document.getElementById('nextWeekBtn').style.display = 'inline-block';
-                    document.getElementById('prevWeekBtn').style.display = currentWeek > 0 ? 'inline-block' : 'none';
                     document.getElementById('weekIndicator').style.display = 'block';
                     document.getElementById('exportBtn').style.display = 'inline-block';
-                    document.getElementById('favoritesBtn').style.display = favorites.length > 0 ? 'inline-block' : 'none';
-                    document.getElementById('bannedBtn').style.display = banned.length > 0 ? 'inline-block' : 'none';
-                    document.getElementById('surpriseBtn').style.display = favorites.length >= 4 ? 'inline-block' : 'none';
+                    document.getElementById('favoritesBtn').style.display = 'inline-block';
+                    document.getElementById('bannedBtn').style.display = 'inline-block';
                     document.getElementById('saveBtn').style.display = 'inline-block';
                     
                     updateWeekDisplay();
+                    updateButtonStates();
                 }
                 
                 const saveDate = state.saveDate ? new Date(state.saveDate).toLocaleDateString() : 'Unknown date';
