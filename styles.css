@@ -370,6 +370,22 @@ h1 {
   transform: translateY(-2px);
 }
 
+.copy-short-list-btn {
+  background: linear-gradient(45deg, #c4e1ff, #9dd6ff);
+  color: #333;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.copy-short-list-btn:hover {
+  background: linear-gradient(45deg, #9dd6ff, #76c7ff);
+  transform: translateY(-2px);
+}
+
 #shoppingListContent {
   max-width: 800px;
   margin: 0 auto;

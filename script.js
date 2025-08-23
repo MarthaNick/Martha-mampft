@@ -647,6 +647,107 @@ function downloadShoppingList() {
     alert('Shopping list downloaded! The file will open in your browser where you can print it as PDF.');
 }
 
+function copyShortList() {
+    const weekMeals = allWeeklyMeals[currentWeek];
+    const calendarWeek = getCalendarWeekForMealWeek(currentWeek);
+    const deactivatedSet = new Set(deactivatedMealsByWeek[currentWeek] || []);
+
+    // Define ingredient categories in typical supermarket order
+    const categories = {
+        'Fresh Vegetables & Herbs': ['asparagus', 'spinach', 'arugula', 'rucola', 'kale', 'brussels sprouts', 'cabbage', 'peas', 'broccoli', 'zucchini', 'bell peppers', 'eggplants', 'cucumber', 'tomatoes', 'cherry tomatoes', 'onions', 'red onion', 'garlic', 'ginger', 'carrots', 'pumpkin', 'winter squash', 'seasonal vegetables', 'spring vegetables', 'seasonal root vegetables', 'mixed seasonal greens', 'mixed greens', 'basil', 'parsley', 'chives', 'thyme', 'rosemary', 'sage', 'oregano', 'dill', 'mint', 'herbs', 'seasonal herbs', 'fresh herbs', 'bok choy', 'scallions', 'cilantro', 'collard greens', 'callaloo leaves', 'wakame seaweed', 'nori seaweed', 'radishes', 'celery', 'bean sprouts', 'green papaya'],
+        'Fruits': ['lemons', 'apples', 'rhubarb', 'plums', 'lime', 'mixed berries', 'avocados', 'korean pear', 'dried apricots', 'dried cranberries', 'dried fruits'],
+        'Meat & Fish': ['salmon fillets', 'chicken breast', 'cod fillets', 'turkey breast', 'duck breast', 'pork tenderloin', 'veal shanks', 'kielbasa sausage', 'ground beef', 'ground pork', 'veal cutlets', 'beef brisket', 'lamb shoulder', 'beef short ribs', 'chorizo', 'chicken thighs', 'beef ribeye', 'chicken pieces', 'prosciutto', 'fresh clams', 'sea bass fillets', 'beef stew meat', 'pork chops', 'halibut fillets', 'trout fillets', 'swordfish steaks', 'rack of lamb', 'sole fillets', 'pork shoulder', 'beef roast', 'lamb shanks', 'lamb chops'],
+        'Dairy & Eggs': ['eggs', 'butter', 'milk', 'heavy cream', 'mascarpone cheese', 'ricotta cheese', 'mozzarella cheese', 'parmesan cheese', 'gruyere cheese', 'goat cheese', 'feta cheese', 'cheddar cheese', 'sour cream', 'cream cheese', 'monterey jack cheese', 'soft-boiled eggs', 'hard-boiled eggs'],
+        'Grains & Bread': ['wild rice', 'quinoa', 'pearl barley', 'brown rice', 'bulgur', 'basmati rice', 'arborio rice', 'pasta', 'lasagna sheets', 'bread', 'pie crust', 'puff pastry', 'breadcrumbs', 'flour', 'short grain rice', 'white rice', 'jasmine rice', 'couscous', 'rye bread', 'sourdough bread', 'naan bread', 'pita bread', 'injera bread', 'macaroni', 'spaetzle', 'ramen noodles', 'orzo pasta', 'egg noodles', 'corn tortillas', 'pierogi'],
+        'Legumes & Nuts': ['chickpeas', 'green lentils', 'red lentils', 'white beans', 'black beans', 'pine nuts', 'pumpkin seeds', 'kidney beans', 'black lentils', 'mixed lentils', 'walnuts', 'peanuts', 'sliced almonds'],
+        'Pantry & Condiments': ['olive oil', 'vegetable oil', 'salt', 'black pepper', 'nutmeg', 'curry powder', 'dijon mustard', 'balsamic vinegar', 'red wine vinegar', 'honey', 'sugar', 'tomato sauce', 'tomatoes (canned)', 'coconut cream', 'white wine', 'vegetable broth', 'coconut milk', 'soy sauce', 'sesame oil', 'teriyaki sauce', 'miso paste', 'garam masala', 'jerk seasoning', 'berbere spice', 'moroccan spice blend', 'enchilada sauce', 'bbq sauce', 'maple syrup', 'sumac', 'tomato salsa', 'fish sauce', 'gochujang', 'sesame seeds', 'lingonberry jam', 'red wine', 'beef broth', 'chicken broth', 'kimchi', 'sauerkraut', 'capers', 'kalamata olives', 'preserved lemons', 'tomato paste', 'gingersnap cookies', 'bay leaves', 'juniper berries', 'caraway seeds', 'cumin', 'turmeric', 'paprika', 'allspice', 'vanilla extract', 'baking powder', 'powdered sugar', 'brown sugar', 'palm sugar', 'scotch bonnet pepper', 'thai chilies', 'pickled beets']
+    };
+
+    // Aggregate all ingredients from active meals only
+    const ingredientsList = {};
+    const categorizedIngredients = {};
+
+    // Initialize categories
+    Object.keys(categories).forEach(category => {
+        categorizedIngredients[category] = {};
+    });
+    categorizedIngredients['Other'] = {};
+
+    weekMeals.forEach(meal => {
+        if (deactivatedSet.has(meal.title)) return;
+        if (meal.ingredients) {
+            Object.entries(meal.ingredients).forEach(([ingredient, amount]) => {
+                if (ingredientsList[ingredient]) {
+                    // If ingredient already exists, note multiple amounts
+                    if (!ingredientsList[ingredient].includes(amount)) {
+                        ingredientsList[ingredient] += ` + ${amount}`;
+                    }
+                } else {
+                    ingredientsList[ingredient] = amount;
+                }
+            });
+        }
+    });
+
+    // Categorize ingredients
+    Object.entries(ingredientsList).forEach(([ingredient, amount]) => {
+        let found = false;
+        const lowerIngredient = ingredient.toLowerCase();
+        
+        for (const [category, keywords] of Object.entries(categories)) {
+            if (keywords.some(keyword => lowerIngredient.includes(keyword.toLowerCase()) || keyword.toLowerCase().includes(lowerIngredient))) {
+                categorizedIngredients[category][ingredient] = amount;
+                found = true;
+                break;
+            }
+        }
+        
+        if (!found) {
+            categorizedIngredients['Other'][ingredient] = amount;
+        }
+    });
+
+    // Generate simple text list
+    let shortListText = `Shopping List - Week ${calendarWeek}\nGenerated: ${new Date().toLocaleDateString()}\n\n`;
+    
+    Object.entries(categorizedIngredients)
+        .filter(([category, ingredients]) => Object.keys(ingredients).length > 0)
+        .forEach(([category, ingredients]) => {
+            shortListText += `${category}:\n`;
+            Object.entries(ingredients)
+                .sort(([a], [b]) => a.localeCompare(b))
+                .forEach(([ingredient, amount]) => {
+                    shortListText += `- ${ingredient}: ${amount}\n`;
+                });
+            shortListText += '\n';
+        });
+
+    // Copy to clipboard
+    navigator.clipboard.writeText(shortListText).then(() => {
+        alert('Short shopping list copied to clipboard! You can now paste it in WhatsApp or any other app.');
+    }).catch(err => {
+        // Fallback for older browsers
+        const textArea = document.createElement('textarea');
+        textArea.value = shortListText;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-999999px';
+        textArea.style.top = '-999999px';
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        
+        try {
+            document.execCommand('copy');
+            alert('Short shopping list copied to clipboard! You can now paste it in WhatsApp or any other app.');
+        } catch (err) {
+            alert('Failed to copy to clipboard. Please try again or copy manually.');
+            console.error('Copy failed:', err);
+        }
+        
+        document.body.removeChild(textArea);
+    });
+}
+
 function nextWeek() {
     currentWeek++;
 
