@@ -13,7 +13,7 @@
 
       body {
         font-family: "Arial", sans-serif;
-        background-color: #f8f9fa;
+        background-color: #ffffff;
         padding: 20px;
         min-height: 100vh;
         display: flex;
@@ -36,11 +36,54 @@
         align-items: center;
       }
 
+      /* Top controls layout: legend left, buttons next to it */
+      .top-controls {
+        display: flex;
+        gap: 24px;
+        align-items: flex-start;
+        width: 100%;
+        max-width: 1400px;
+        margin: 0 auto 20px;
+        flex-wrap: wrap;
+      }
+      #topConstraintsLegend { flex: 1 1 260px; min-width: 260px; }
+      #topConstraintsLegend .legend-card { padding: 12px; }
+      .buttons-panel { flex: 2 1 560px; background: #9e9e9e; border-radius: 12px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+
       .button-row {
         display: flex;
         gap: 20px;
         flex-wrap: wrap;
         justify-content: center;
+      }
+
+      /* New layout for prev / randomize / next */
+      .nav-randomize-row {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: center;
+        gap: 20px;
+        width: 100%;
+        max-width: 900px;
+      }
+      .align-left { justify-self: start; }
+      .align-right { justify-self: end; }
+      .randomize-btn {
+        background: linear-gradient(45deg, #c8e6c9, #a5d6a7);
+        box-shadow: 0 6px 20px rgba(165, 214, 167, 0.5);
+        border: none;
+        padding: 18px 40px;
+        font-size: 22px;
+        border-radius: 30px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        color: #2c3e50;
+        font-weight: 600;
+      }
+      .randomize-btn:hover {
+        transform: translateY(-2px);
+        background: linear-gradient(45deg, #a5d6a7, #81c784);
+        box-shadow: 0 8px 24px rgba(165, 214, 167, 0.65);
       }
 
       /* Base button styles */
@@ -410,41 +453,133 @@
         border-bottom: 1px dotted #ccc;
         padding: 8px 0;
       }
+      /* Added: split layout and per-meal table */
+      .shopping-category-content {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        align-items: start;
+      }
+      @media (max-width: 900px) {
+        .shopping-category-content { grid-template-columns: 1fr; }
+      }
+      .per-meal-table-wrapper {
+        background: white;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        overflow: auto;
+      }
+      .per-meal-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+      .per-meal-table th, .per-meal-table td {
+        border-bottom: 1px dotted #ccc;
+        padding: 8px 6px;
+        text-align: center;
+        vertical-align: top;
+        white-space: nowrap;
+      }
+      .per-meal-table th { color: #2c3e50; font-weight: 600; background: #f8f9fa; }
+      .shopping-meal-actions { display: flex; gap: 8px; align-items: center; }
+      .meal-toggle-btn {
+        background: linear-gradient(45deg, #e8eaf6, #c5cae9);
+        color: #333;
+        border: none;
+        padding: 6px 10px;
+        border-radius: 14px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-size: 12px;
+      }
+      .meal-toggle-btn:hover { background: linear-gradient(45deg, #c5cae9, #9fa8da); }
+      .meal-toggle-btn.deactivated { background: linear-gradient(45deg, #fbe9e7, #ffccbc); }
+
+      /* Constraint badges */
+      .constraints-row { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 16px 16px; justify-content: center; }
+      .constraint-badge { font-size: 11px; padding: 4px 8px; border-radius: 12px; color: #2c3e50; background: #ecf0f1; border: 1px solid rgba(0,0,0,0.05); }
+      .badge-pasta { background: #ffe0b2; }
+      .badge-green_vegetable { background: #c8e6c9; }
+      .badge-oven { background: #ffccbc; }
+      .badge-grain { background: #bbdefb; }
+      .badge-seasonal { background: #e1bee7; }
+      .badge-salad { background: #dcedc8; }
+      .badge-beans_lentils { background: #f8bbd0; }
+      .badge-eggs { background: #fff59d; }
+      .badge-dairy { background: #e0f7fa; }
+
+      /* Constraints legend */
+      #constraintsLegend { max-width: 1200px; width: 100%; margin: 24px auto 0; display: none; }
+      #constraintsLegend.show { display: block; }
+      .legend-card { background: #ffffff; border-radius: 12px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+      .legend-title { color: #2c3e50; margin-bottom: 10px; text-align: center; }
+      .legend-list { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+
+      /* Unified shopping table with 4 meal columns */
+      .shopping-table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+      .shopping-table th, .shopping-table td { border-bottom: 1px dotted #ccc; padding: 8px 10px; text-align: left; }
+      .shopping-table th { background: #f8f9fa; color: #2c3e50; font-weight: 600; }
+      .shopping-table .amount-cell { text-align: right; color: #e67e22; font-weight: bold; }
+      .shopping-table .center { text-align: center; }
+      /* Meal column colors */
+      .meal-col-1 { background: #fff3e0; }
+      .meal-col-2 { background: #e8f5e9; }
+      .meal-col-3 { background: #e3f2fd; }
+      .meal-col-4 { background: #f3e5f5; }
+      .meal-header-1 { background: #ffe0b2 !important; }
+      .meal-header-2 { background: #c8e6c9 !important; }
+      .meal-header-3 { background: #bbdefb !important; }
+      .meal-header-4 { background: #e1bee7 !important; }
+      .meal-badge { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; font-size: 12px; font-weight: 700; color: #2c3e50; margin-right: 8px; }
+      .meal-badge-1 { background: #ffe0b2; }
+      .meal-badge-2 { background: #c8e6c9; }
+      .meal-badge-3 { background: #bbdefb; }
+      .meal-badge-4 { background: #e1bee7; }
     </style>
   </head>
   <body>
     <h1>Martha's Meals</h1>
 
-    <div class="button-container">
-      <!-- Row 1: Generate, Next, Previous (Green pastels) -->
-      <div class="button-row">
-        <button class="generate-btn" onclick="generateMeals()">
-          Generate This Week's Meals
-        </button>
-        <button
-          class="surprise-btn"
-          onclick="surpriseMe()"
-          id="surpriseBtn"
-          style="display: none"
-        >
-          🎲 Surprise Me
-        </button>
-        <button
-          class="next-week-btn"
-          onclick="nextWeek()"
-          id="nextWeekBtn"
-          style="display: none"
-        >
-          Next Week →
-        </button>
-        <button
-          class="prev-week-btn"
-          onclick="previousWeek()"
-          id="prevWeekBtn"
-          style="display: none"
-        >
-          ← Previous Week
-        </button>
+    <div class="top-controls">
+      <div id="topConstraintsLegend">
+        <div class="legend-card">
+          <div class="legend-title" style="text-align:left;">Constraints reminder</div>
+          <div class="legend-list" style="justify-content:flex-start;">
+            <span class="constraint-badge badge-pasta">pasta</span>
+            <span class="constraint-badge badge-green_vegetable">green_vegetable</span>
+            <span class="constraint-badge badge-oven">oven</span>
+            <span class="constraint-badge badge-grain">grain</span>
+            <span class="constraint-badge badge-seasonal">seasonal</span>
+            <span class="constraint-badge badge-salad">salad</span>
+            <span class="constraint-badge badge-beans_lentils">beans_lentils</span>
+            <span class="constraint-badge badge-eggs">eggs</span>
+            <span class="constraint-badge badge-dairy">dairy</span>
+            <span class="constraint-badge">3× vegetarian</span>
+            <span class="constraint-badge">1× meat/poultry/fish</span>
+          </div>
+        </div>
+        <div class="legend-card" style="margin-top:12px;">
+          <div class="legend-title" style="text-align:left;">World food regions</div>
+          <div class="legend-list" style="justify-content:flex-start;">
+            <span class="constraint-badge">mediterranean</span>
+            <span class="constraint-badge">eastern_european</span>
+            <span class="constraint-badge">scandinavian</span>
+            <span class="constraint-badge">germanic</span>
+            <span class="constraint-badge">north_american</span>
+            <span class="constraint-badge">middle_eastern</span>
+            <span class="constraint-badge">latin_american</span>
+            <span class="constraint-badge">south_east_asian</span>
+            <span class="constraint-badge">east_asian</span>
+            <span class="constraint-badge">african</span>
+            <span class="constraint-badge">caribbean</span>
+          </div>
+        </div>
+      </div>
+      <div class="buttons-panel">
+      <div class="button-container">
+      <!-- Row 1: Prev | New Randomization | Next -->
+      <div class="nav-randomize-row">
+        <button class="prev-week-btn align-left" onclick="previousWeek()" id="prevWeekBtn">← Previous Week</button>
+        <button class="randomize-btn" onclick="newRandomization()" id="randomizeBtn">New Randomization</button>
+        <button class="next-week-btn align-right" onclick="nextWeek()" id="nextWeekBtn">Next Week →</button>
       </div>
 
       <!-- Row 2: Favorites, Banned (Blue pastels) -->
@@ -485,7 +620,6 @@
           class="save-btn"
           onclick="saveState()"
           id="saveBtn"
-          style="display: none"
         >
           💾 Save State
         </button>
@@ -497,6 +631,7 @@
           📂 Load State
         </button>
       </div>
+      </div>
     </div>
 
     <div class="week-indicator" id="weekIndicator" style="display: none">
@@ -504,6 +639,24 @@
     </div>
 
     <div class="meals-container" id="mealsContainer"></div>
+    <div id="constraintsLegend">
+      <div class="legend-card">
+        <div class="legend-title">Weekly constraints to satisfy</div>
+        <div class="legend-list">
+          <span class="constraint-badge badge-pasta">pasta</span>
+          <span class="constraint-badge badge-green_vegetable">green_vegetable</span>
+          <span class="constraint-badge badge-oven">oven</span>
+          <span class="constraint-badge badge-grain">grain</span>
+          <span class="constraint-badge badge-seasonal">seasonal</span>
+          <span class="constraint-badge badge-salad">salad</span>
+          <span class="constraint-badge badge-beans_lentils">beans_lentils</span>
+          <span class="constraint-badge badge-eggs">eggs</span>
+          <span class="constraint-badge badge-dairy">dairy</span>
+          <span class="constraint-badge">3× vegetarian</span>
+          <span class="constraint-badge">1× meat/poultry/fish</span>
+        </div>
+      </div>
+    </div>
 
     <script src="meals.js"></script>
     <div class="list-container" id="favoritesContainer">
@@ -552,6 +705,41 @@
               let banned = [];
               let mealRatings = {}; // Store ratings for each meal
               let startingCalendarWeek = getCurrentWeekNumber(); // Track when meal planning started
+              let deactivatedMealsByWeek = {};
+
+              function getFlagForTitle(title) {
+                  const t = title.toLowerCase();
+                  // Direct country keywords
+                  if (t.includes('italian') || t.includes('osso buco') || t.includes('parmigiana') || t.includes('saltimbocca') || t.includes('moussaka')) return '🇮🇹';
+                  if (t.includes('polish') || t.includes('pierogi') || t.includes('kapusta')) return '🇵🇱';
+                  if (t.includes('swedish') || t.includes('janssons') || t.includes('meatballs')) return '🇸🇪';
+                  if (t.includes('norwegian')) return '🇳🇴';
+                  if (t.includes('german') || t.includes('sauerbraten')) return '🇩🇪';
+                  if (t.includes('austrian') || t.includes('wiener schnitzel') || t.includes('kaiserschmarrn')) return '🇦🇹';
+                  if (t.includes('swiss') || t.includes('rösti') || t.includes('roesti') || t.includes('gruyère')) return '🇨🇭';
+                  if (t.includes('new england') || t.includes('bbq') || t.includes('american') || t.includes('canadian') || t.includes('tourtière')) return '🇺🇸';
+                  if (t.includes('canadian')) return '🇨🇦';
+                  if (t.includes('moroccan') || t.includes('tagine')) return '🇲🇦';
+                  if (t.includes('brazilian') || t.includes('feijoada')) return '🇧🇷';
+                  if (t.includes('indian') || t.includes('dal makhani') || t.includes('butter chicken')) return '🇮🇳';
+                  if (t.includes('korean') || t.includes('bulgogi') || t.includes('bibimbap') || t.includes('kimchi')) return '🇰🇷';
+                  if (t.includes('japanese') || t.includes('ramen') || t.includes('teriyaki')) return '🇯🇵';
+                  if (t.includes('ethiopian') || t.includes('injera') || t.includes('doro wat')) return '🇪🇹';
+                  if (t.includes('jamaican') || t.includes('jerk') || t.includes('callaloo')) return '🇯🇲';
+                  if (t.includes('lebanese') || t.includes('fattoush')) return '🇱🇧';
+                  if (t.includes('mexican') || t.includes('chiles rellenos')) return '🇲🇽';
+                  if (t.includes('turkish') || t.includes('imam bayildi')) return '🇹🇷';
+                  if (t.includes('greek') || t.includes('moussaka')) return '🇬🇷';
+                  if (t.includes('ukrainian') || t.includes('borscht')) return '🇺🇦';
+                  if (t.includes('danish') || t.includes('smørrebrød') || t.includes('smorrebrod')) return '🇩🇰';
+                  if (t.includes('peruvian') || t.includes('quinoa soup')) return '🇵🇪';
+                  if (t.includes('thai') || t.includes('papaya salad')) return '🇹🇭';
+                  if (t.includes('cuban')) return '🇨🇺';
+                  if (t.includes('norwegian')) return '🇳🇴';
+                  if (t.includes('korean')) return '🇰🇷';
+                  // Region fallbacks
+                  return '🌍';
+              }
 
               function getCurrentWeekNumber() {
                   const now = new Date();
@@ -581,112 +769,74 @@
               }
 
               function generateWeeklyMeals() {
-                  // Remove banned meals from available options
-                  const availableMeatMeals = meatMeals.filter(meal =>
-                      !usedMeatMeals.includes(meal.title) && !banned.includes(meal.title)
-                  );
-                  const availableVegetarianMeals = vegetarianMeals.filter(meal =>
-                      !usedVegetarianMeals.includes(meal.title) && !banned.includes(meal.title)
-                  );
-
-                  // Check if we need to include favorite meals (after 4 weeks)
-                  let priorityMeatMeals = availableMeatMeals;
-                  let priorityVegetarianMeals = availableVegetarianMeals;
-
-                  if (Object.keys(allWeeklyMeals).length >= 4) {
-                      // After 4 weeks, prioritize favorites
-                      const favoriteMeatMeals = availableMeatMeals.filter(meal => favorites.includes(meal.title));
-                      const favoriteVegetarianMeals = availableVegetarianMeals.filter(meal => favorites.includes(meal.title));
-
-                      if (favoriteMeatMeals.length > 0) priorityMeatMeals = favoriteMeatMeals;
-                      if (favoriteVegetarianMeals.length > 0) priorityVegetarianMeals = favoriteVegetarianMeals;
-                  }
-
-                  // Reset used meals if we've exhausted options
-                  if (priorityMeatMeals.length === 0) {
-                      usedMeatMeals = [];
-                      priorityMeatMeals = meatMeals.filter(meal => !banned.includes(meal.title));
-                  }
-                  if (priorityVegetarianMeals.length < 3) {
-                      usedVegetarianMeals = [];
-                      priorityVegetarianMeals = vegetarianMeals.filter(meal => !banned.includes(meal.title));
-                  }
-
-                  // Required constraints that must be covered each week
-                  const requiredConstraints = [
-                      'seasonal', 'salad', 'oven', 'pasta', 'beans_lentils',
-                      'eggs', 'dairy', 'grain', 'green_vegetable'
-                  ];
-
-                  // Select 1 meat meal
-                  const selectedMeatMeal = shuffleArray(priorityMeatMeals)[0];
-                  usedMeatMeals.push(selectedMeatMeal.title);
-
-                  // Track which constraints and regions are already covered by the meat meal
-                  let coveredConstraints = [...selectedMeatMeal.constraints];
-                  let coveredRegions = [selectedMeatMeal.region];
-                  let selectedMeals = [selectedMeatMeal];
-
-                  // Select 3 vegetarian meals that cover remaining constraints and ensure regional diversity
-                  let remainingVegetarianMeals = [...priorityVegetarianMeals];
-
-                  for (let i = 0; i < 3; i++) {
-                      // Find uncovered required constraints
-                      const uncoveredConstraints = requiredConstraints.filter(c => !coveredConstraints.includes(c));
-                      
-                      // Prioritize meals from uncovered regions to ensure at least 2 regions per week
-                      const uncoveredRegionMeals = remainingVegetarianMeals.filter(meal =>
-                          !coveredRegions.includes(meal.region)
-                      );
-                      
-                      let candidateMeals = remainingVegetarianMeals;
-                      
-                      // If we have less than 2 regions covered and there are uncovered region meals, prioritize them
-                      if (coveredRegions.length < 2 && uncoveredRegionMeals.length > 0) {
-                          candidateMeals = uncoveredRegionMeals;
-                      }
-
-                      if (uncoveredConstraints.length > 0) {
-                          // Prioritize meals that cover uncovered constraints
-                          const constraintPriorityMeals = candidateMeals.filter(meal =>
-                              meal.constraints.some(c => uncoveredConstraints.includes(c))
-                          );
-
-                          if (constraintPriorityMeals.length > 0) {
-                              // Sort by how many uncovered constraints each meal covers
-                              constraintPriorityMeals.sort((a, b) => {
-                                  const aScore = a.constraints.filter(c => uncoveredConstraints.includes(c)).length;
-                                  const bScore = b.constraints.filter(c => uncoveredConstraints.includes(c)).length;
-                                  return bScore - aScore;
-                              });
-
-                              const selectedMeal = constraintPriorityMeals[0];
-                              selectedMeals.push(selectedMeal);
-                              coveredConstraints.push(...selectedMeal.constraints);
-                              if (!coveredRegions.includes(selectedMeal.region)) {
-                                  coveredRegions.push(selectedMeal.region);
-                              }
-                              usedVegetarianMeals.push(selectedMeal.title);
-                              remainingVegetarianMeals = remainingVegetarianMeals.filter(m => m.title !== selectedMeal.title);
-                              continue;
+                  // Helper: try once to build a valid week set meeting strict rules
+                  function tryBuildWeek() {
+                      // Exclude meals from the previous 3 weeks (no repeats within any 4 consecutive weeks)
+                      const recentTitles = new Set();
+                      for (let w = Math.max(0, currentWeek - 3); w <= currentWeek - 1; w++) {
+                          if (allWeeklyMeals[w]) {
+                              allWeeklyMeals[w].forEach(m => recentTitles.add(m.title));
                           }
                       }
 
-                      // If no constraint priority meals, select from candidate meals
-                      if (candidateMeals.length > 0) {
-                          const randomMeal = shuffleArray(candidateMeals)[0];
-                          selectedMeals.push(randomMeal);
-                          coveredConstraints.push(...randomMeal.constraints);
-                          if (!coveredRegions.includes(randomMeal.region)) {
-                              coveredRegions.push(randomMeal.region);
+                      const availableMeatMeals = meatMeals.filter(meal => !banned.includes(meal.title) && !recentTitles.has(meal.title));
+                      const availableVegetarianMeals = vegetarianMeals.filter(meal => !banned.includes(meal.title) && !recentTitles.has(meal.title));
+
+                      const requiredConstraints = [
+                          'seasonal','salad','oven','pasta','beans_lentils','eggs','dairy','grain','green_vegetable'
+                      ];
+
+                      // pick 1 meat
+                      if (availableMeatMeals.length === 0) return null;
+                      const meat = shuffleArray(availableMeatMeals)[0];
+
+                      // pick 3 vegetarian
+                      if (availableVegetarianMeals.length < 3) return null;
+                      let vegPool = shuffleArray(availableVegetarianMeals);
+
+                      // Greedy cover constraints
+                      const selected = [meat];
+                      const covered = new Set(meat.constraints || []);
+                      for (let i = 0; i < vegPool.length && selected.length < 4; i++) {
+                          const candidate = vegPool[i];
+                          // prefer that adds new constraints
+                          const adds = (candidate.constraints || []).some(c => !covered.has(c));
+                          if (adds || (4 - selected.length) >= (requiredConstraints.filter(c=>!covered.has(c)).length)) {
+                              selected.push(candidate);
+                              (candidate.constraints || []).forEach(c => covered.add(c));
                           }
-                          usedVegetarianMeals.push(randomMeal.title);
-                          remainingVegetarianMeals = remainingVegetarianMeals.filter(m => m.title !== randomMeal.title);
                       }
+                      if (selected.length < 4) return null;
+
+                      // if still not 3 veg, adjust
+                      const vegCount = selected.filter(m => m.type === 'vegetarian').length;
+                      if (vegCount !== 3) return null;
+
+                      // validate constraint coverage
+                      const hasAll = requiredConstraints.every(c => selected.some(m => (m.constraints||[]).includes(c)));
+                      if (!hasAll) return null;
+
+                      return shuffleArray(selected);
                   }
 
-                  // Shuffle the final selection so meat isn't always first
-                  return shuffleArray(selectedMeals);
+                  // Retry loop to satisfy constraints
+                  for (let attempts = 0; attempts < 400; attempts++) {
+                      const built = tryBuildWeek();
+                      if (built) {
+                          return built;
+                      }
+                  }
+                  // Fallback: relax recent constraint but still honor banned and type/coverage if possible
+                  const poolMeat = meatMeals.filter(m=>!banned.includes(m.title));
+                  const poolVeg = vegetarianMeals.filter(m=>!banned.includes(m.title));
+                  if (poolMeat.length && poolVeg.length >= 3) {
+                      const meat = shuffleArray(poolMeat)[0];
+                      const vegs = shuffleArray(poolVeg).slice(0,3);
+                      const selected = [meat, ...vegs];
+                      return selected;
+                  }
+                  const allMeals = shuffleArray([...poolMeat, ...poolVeg]);
+                  return allMeals.slice(0,4);
               }
 
               function displayMeals(meals) {
@@ -709,7 +859,10 @@
                           mealCard.innerHTML = `
                               <img src="${meal.image}" alt="${meal.title}" class="meal-image">
                               <div class="meal-title">
-                                  ${meal.title}
+                                  ${getFlagForTitle(meal.title)} ${meal.title}
+                              </div>
+                              <div class="constraints-row">
+                                  ${(meal.constraints || []).map(c => `<span class=\"constraint-badge badge-${c}\">${c}</span>`).join('')}
                               </div>
                               <div class="rating-buttons">
                                   <button class="thumb-btn thumb-up ${thumbUpActive}" onclick="rateMeal('${meal.title}', 'up')">
@@ -778,28 +931,46 @@
                   document.getElementById('weekText').textContent = `Calendar Week ${calendarWeek}`;
               }
 
+              function newRandomization() {
+                  // Generate 4 random meals for the current week honoring constraints
+                  const selectedMeals = generateWeeklyMeals();
+                  allWeeklyMeals[currentWeek] = selectedMeals;
+                  displayMeals(selectedMeals);
+                  // Reveal controls
+                  document.getElementById('nextWeekBtn').style.display = 'inline-block';
+                  document.getElementById('prevWeekBtn').style.display = currentWeek > 0 ? 'inline-block' : 'none';
+                  document.getElementById('weekIndicator').style.display = 'block';
+                  document.getElementById('exportBtn').style.display = 'inline-block';
+                  document.getElementById('favoritesBtn').style.display = 'inline-block';
+                  document.getElementById('bannedBtn').style.display = 'inline-block';
+                  document.getElementById('surpriseBtn').style.display = 'inline-block';
+                  document.getElementById('saveBtn').style.display = 'inline-block';
+                  document.getElementById('randomizeBtn').style.display = 'inline-block';
+                  document.getElementById('weekIndicator').style.display = 'block';
+                  updateWeekDisplay();
+              }
+
               function generateMeals() {
+                  // Backward compatibility retained
+                  if (Object.keys(allWeeklyMeals).length === 0) {
+                      currentWeek = 0;
+                      startingCalendarWeek = getCurrentWeekNumber();
+                      usedMeatMeals = [];
+                      usedVegetarianMeals = [];
+                      allWeeklyMeals = {};
+                  }
+                  newRandomization();
+              }
+
+              // Auto-generate on first load
+              document.addEventListener('DOMContentLoaded', () => {
                   currentWeek = 0;
                   startingCalendarWeek = getCurrentWeekNumber();
                   usedMeatMeals = [];
                   usedVegetarianMeals = [];
-                  allWeeklyMeals = {}; // Reset all weekly meals
-
-                  const selectedMeals = generateWeeklyMeals();
-                  allWeeklyMeals[0] = selectedMeals; // Store week 0 meals
-                  displayMeals(selectedMeals);
-
-                  // Show navigation and indicator buttons
-                  document.getElementById('nextWeekBtn').style.display = 'inline-block';
-                  document.getElementById('prevWeekBtn').style.display = 'none';
-                  document.getElementById('weekIndicator').style.display = 'block';
-                  document.getElementById('exportBtn').style.display = 'inline-block';
-                  document.getElementById('favoritesBtn').style.display = favorites.length > 0 ? 'inline-block' : 'none';
-                  document.getElementById('bannedBtn').style.display = banned.length > 0 ? 'inline-block' : 'none';
-                  document.getElementById('surpriseBtn').style.display = favorites.length >= 4 ? 'inline-block' : 'none';
-                  document.getElementById('saveBtn').style.display = 'inline-block';
-                  updateWeekDisplay();
-              }
+                  allWeeklyMeals = {};
+                  newRandomization();
+              });
 
               function surpriseMe() {
                   if (favorites.length < 4) {
@@ -835,7 +1006,8 @@
 
                   // Show navigation buttons
                   document.getElementById('nextWeekBtn').style.display = 'inline-block';
-                  document.getElementById('prevWeekBtn').style.display = 'none';
+                  document.getElementById('prevWeekBtn').style.display = currentWeek > 0 ? 'inline-block' : 'none';
+                  document.getElementById('randomizeBtn').style.display = 'inline-block';
                   document.getElementById('weekIndicator').style.display = 'block';
                   document.getElementById('exportBtn').style.display = 'inline-block';
                   document.getElementById('saveBtn').style.display = 'inline-block';
@@ -866,6 +1038,8 @@
               function generateShoppingListContent() {
                   const weekMeals = allWeeklyMeals[currentWeek];
                   const calendarWeek = getCalendarWeekForMealWeek(currentWeek);
+                  if (!deactivatedMealsByWeek[currentWeek]) { deactivatedMealsByWeek[currentWeek] = []; }
+                  const deactivatedSet = new Set(deactivatedMealsByWeek[currentWeek]);
 
                   // Define ingredient categories in typical supermarket order
                   const categories = {
@@ -878,9 +1052,10 @@
                       'Pantry & Condiments': ['olive oil', 'vegetable oil', 'salt', 'black pepper', 'nutmeg', 'curry powder', 'dijon mustard', 'balsamic vinegar', 'red wine vinegar', 'honey', 'sugar', 'tomato sauce', 'tomatoes (canned)', 'coconut cream', 'white wine', 'vegetable broth', 'coconut milk', 'soy sauce', 'sesame oil', 'teriyaki sauce', 'miso paste', 'garam masala', 'jerk seasoning', 'berbere spice', 'moroccan spice blend', 'enchilada sauce', 'bbq sauce', 'maple syrup', 'sumac', 'tomato salsa', 'fish sauce', 'gochujang', 'sesame seeds', 'lingonberry jam', 'red wine', 'beef broth', 'chicken broth', 'kimchi', 'sauerkraut', 'capers', 'kalamata olives', 'preserved lemons', 'tomato paste', 'gingersnap cookies', 'bay leaves', 'juniper berries', 'caraway seeds', 'cumin', 'turmeric', 'paprika', 'allspice', 'vanilla extract', 'baking powder', 'powdered sugar', 'brown sugar', 'palm sugar', 'scotch bonnet pepper', 'thai chilies', 'pickled beets']
                   };
 
-                  // Aggregate all ingredients
+                  // Aggregate all ingredients for active meals and track per-meal amounts
                   const ingredientsList = {};
                   const categorizedIngredients = {};
+                  const perMealAmounts = {};
 
                   // Initialize categories
                   Object.keys(categories).forEach(category => {
@@ -891,13 +1066,16 @@
                   weekMeals.forEach(meal => {
                       if (meal.ingredients) {
                           Object.entries(meal.ingredients).forEach(([ingredient, amount]) => {
-                              if (ingredientsList[ingredient]) {
-                                  // If ingredient already exists, note multiple amounts
-                                  if (!ingredientsList[ingredient].includes(amount)) {
-                                      ingredientsList[ingredient] += ` + ${amount}`;
+                              if (!perMealAmounts[ingredient]) perMealAmounts[ingredient] = {};
+                              perMealAmounts[ingredient][meal.title] = deactivatedSet.has(meal.title) ? '' : amount;
+                              if (!deactivatedSet.has(meal.title)) {
+                                  if (ingredientsList[ingredient]) {
+                                      if (!ingredientsList[ingredient].includes(amount)) {
+                                          ingredientsList[ingredient] += ` + ${amount}`;
+                                      }
+                                  } else {
+                                      ingredientsList[ingredient] = amount;
                                   }
-                              } else {
-                                  ingredientsList[ingredient] = amount;
                               }
                           });
                       }
@@ -930,10 +1108,13 @@
 
                       <div class="shopping-meals-list">
                           <h3>📋 This Week's Meals:</h3>
-                          ${weekMeals.map(meal => `
-                              <div class="shopping-meal-item">
-                                  <span>• ${meal.title}</span>
-                                  <span class="portion-count">(4 portions)</span>
+                          ${weekMeals.map((meal, idx) => `
+                              <div class=\"shopping-meal-item\"> 
+                                  <span><span class=\"meal-badge meal-badge-${idx+1}\">${idx+1}</span>${getFlagForTitle(meal.title)} ${meal.title}</span>
+                                  <span class=\"shopping-meal-actions\"> 
+                                      <span class=\"portion-count\">(4 portions)</span>
+                                      <button class=\"meal-toggle-btn ${deactivatedSet.has(meal.title) ? 'deactivated' : ''}\" onclick=\"toggleMealActive('${meal.title}')\">${deactivatedSet.has(meal.title) ? 'Activate' : 'Deactivate'}</button>
+                                  </span> 
                               </div>
                           `).join('')}
                       </div>
@@ -944,14 +1125,26 @@
                           .map(([category, ingredients]) => `
                               <div class="shopping-category-section">
                                   <div class="shopping-category-title">${category}</div>
-                                  <div class="shopping-ingredients-list">
-                                      ${Object.entries(ingredients)
-                                          .sort(([a], [b]) => a.localeCompare(b))
-                                          .map(([ingredient, amount]) => `
-                                              <div class="shopping-ingredient">${ingredient}</div>
-                                              <div class="shopping-amount">${amount}</div>
-                                          `).join('')}
-                                  </div>
+                                  <table class=\"shopping-table\"> 
+                                      <thead>
+                                          <tr>
+                                              <th>Ingredient</th>
+                                              <th class=\"amount-cell\">Total</th>
+                                              ${weekMeals.map((m, idx) => `<th class=\"center meal-header-${idx+1}\">${idx+1}</th>`).join('')}
+                                          </tr>
+                                      </thead>
+                                      <tbody>
+                                          ${Object.entries(ingredients)
+                                              .sort(([a], [b]) => a.localeCompare(b))
+                                              .map(([ingredient, amount]) => `
+                                                  <tr>
+                                                      <td>${ingredient}</td>
+                                                      <td class=\"amount-cell\">${amount}</td>
+                                                      ${weekMeals.map((m, idx) => `<td class=\"center meal-col-${idx+1}\">${(perMealAmounts[ingredient] && perMealAmounts[ingredient][m.title]) ? perMealAmounts[ingredient][m.title] : ''}</td>`).join('')}
+                                                  </tr>
+                                              `).join('')}
+                                      </tbody>
+                                  </table>
                               </div>
                           `).join('')}
                   `;
@@ -959,9 +1152,18 @@
                   document.getElementById('shoppingListContent').innerHTML = htmlContent;
               }
 
+              function toggleMealActive(mealTitle) {
+                  if (!deactivatedMealsByWeek[currentWeek]) { deactivatedMealsByWeek[currentWeek] = []; }
+                  const list = deactivatedMealsByWeek[currentWeek];
+                  const idx = list.indexOf(mealTitle);
+                  if (idx >= 0) { list.splice(idx, 1); } else { list.push(mealTitle); }
+                  generateShoppingListContent();
+              }
+
               function downloadShoppingList() {
                   const weekMeals = allWeeklyMeals[currentWeek];
                   const calendarWeek = getCalendarWeekForMealWeek(currentWeek);
+                  const deactivatedSet = new Set(deactivatedMealsByWeek[currentWeek] || []);
 
                   // Define ingredient categories in typical supermarket order
                   const categories = {
@@ -974,7 +1176,7 @@
                       'Pantry & Condiments': ['olive oil', 'vegetable oil', 'salt', 'black pepper', 'nutmeg', 'curry powder', 'dijon mustard', 'balsamic vinegar', 'red wine vinegar', 'honey', 'sugar', 'tomato sauce', 'tomatoes (canned)', 'coconut cream', 'white wine', 'vegetable broth', 'coconut milk', 'soy sauce', 'sesame oil', 'teriyaki sauce', 'miso paste', 'garam masala', 'jerk seasoning', 'berbere spice', 'moroccan spice blend', 'enchilada sauce', 'bbq sauce', 'maple syrup', 'sumac', 'tomato salsa', 'fish sauce', 'gochujang', 'sesame seeds', 'lingonberry jam', 'red wine', 'beef broth', 'chicken broth', 'kimchi', 'sauerkraut', 'capers', 'kalamata olives', 'preserved lemons', 'tomato paste', 'gingersnap cookies', 'bay leaves', 'juniper berries', 'caraway seeds', 'cumin', 'turmeric', 'paprika', 'allspice', 'vanilla extract', 'baking powder', 'powdered sugar', 'brown sugar', 'palm sugar', 'scotch bonnet pepper', 'thai chilies', 'pickled beets']
                   };
 
-                  // Aggregate all ingredients
+                  // Aggregate all ingredients from active meals only
                   const ingredientsList = {};
                   const categorizedIngredients = {};
 
@@ -985,6 +1187,7 @@
                   categorizedIngredients['Other'] = {};
 
                   weekMeals.forEach(meal => {
+                      if (deactivatedSet.has(meal.title)) return;
                       if (meal.ingredients) {
                           Object.entries(meal.ingredients).forEach(([ingredient, amount]) => {
                               if (ingredientsList[ingredient]) {
@@ -1159,6 +1362,7 @@
 
                   document.getElementById('prevWeekBtn').style.display = 'inline-block';
                   document.getElementById('nextWeekBtn').style.display = 'inline-block';
+                  document.getElementById('randomizeBtn').style.display = 'inline-block';
                   updateWeekDisplay();
               }
 
@@ -1169,6 +1373,7 @@
 
                       document.getElementById('prevWeekBtn').style.display = currentWeek > 0 ? 'inline-block' : 'none';
                       document.getElementById('nextWeekBtn').style.display = 'inline-block';
+                      document.getElementById('randomizeBtn').style.display = 'inline-block';
                       updateWeekDisplay();
                   }
               }
@@ -1222,7 +1427,7 @@
 
                       mealCard.innerHTML = `
                           <img src="${meal.image}" alt="${meal.title}" class="meal-image">
-                          <div class="meal-title">${meal.title}</div>
+                          <div class="meal-title">${getFlagForTitle(meal.title)} ${meal.title}</div>
                           <div class="rating-buttons">
                               <button class="thumb-btn thumb-up ${thumbUpActive}" onclick="rateMeal('${meal.title}', 'up')">
                                   👍
