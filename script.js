@@ -589,8 +589,8 @@ function downloadShoppingList() {
     }
   });
 
-  // Create PDF content
-  let pdfContent = `
+  // Create HTML content
+  let htmlContent = `
 <!DOCTYPE html>
 <html>
 <head>
@@ -709,8 +709,8 @@ function downloadShoppingList() {
 </body>
 </html>`;
 
-  // Create and download PDF
-  const blob = new Blob([pdfContent], { type: "text/html" });
+  // Create and download HTML file
+  const blob = new Blob([htmlContent], { type: "text/html" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
@@ -722,7 +722,7 @@ function downloadShoppingList() {
 
   // Show success message
   alert(
-    "Einkaufsliste heruntergeladen! Die Datei wird in Ihrem Browser geöffnet, wo Sie sie als PDF drucken können."
+    "Einkaufsliste heruntergeladen! Die HTML-Datei wird in Ihrem Browser geöffnet, wo Sie sie drucken können."
   );
 }
 
