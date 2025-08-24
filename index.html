@@ -1,47 +1,47 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Martha's Meals</title>
+    <title>Martha mampft</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍽️</text></svg>">
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>
-    <h1>Martha's Meals</h1>
+    <h1>Martha mampft</h1>
 
     <div class="top-controls">
       <div id="topConstraintsLegend">
         <div class="legend-card">
-          <div class="legend-title" style="text-align:left;">Constraints reminder</div>
+          <div class="legend-title" style="text-align:left;">Beschränkungen Erinnerung</div>
           <div class="legend-list" style="justify-content:flex-start;">
-            <span class="constraint-badge badge-pasta">pasta</span>
-            <span class="constraint-badge badge-green_vegetable">green_vegetable</span>
-            <span class="constraint-badge badge-oven">oven</span>
-            <span class="constraint-badge badge-grain">grain</span>
-            <span class="constraint-badge badge-seasonal">seasonal</span>
-            <span class="constraint-badge badge-salad">salad</span>
-            <span class="constraint-badge badge-beans_lentils">beans_lentils</span>
-            <span class="constraint-badge badge-eggs">eggs</span>
-            <span class="constraint-badge badge-dairy">dairy</span>
-            <span class="constraint-badge">3× vegetarian</span>
-            <span class="constraint-badge">1× meat/poultry/fish</span>
+            <span class="constraint-badge badge-pasta">Nudeln</span>
+            <span class="constraint-badge badge-green_vegetable">Grünes Gemüse</span>
+            <span class="constraint-badge badge-oven">Backofen</span>
+            <span class="constraint-badge badge-grain">Getreide</span>
+            <span class="constraint-badge badge-seasonal">Saisonal</span>
+            <span class="constraint-badge badge-salad">Salat</span>
+            <span class="constraint-badge badge-beans_lentils">Bohnen/Linsen</span>
+            <span class="constraint-badge badge-eggs">Eier</span>
+            <span class="constraint-badge badge-dairy">Milchprodukte</span>
+            <span class="constraint-badge">3× vegetarisch</span>
+            <span class="constraint-badge">1× Fleisch/Geflügel/Fisch</span>
           </div>
         </div>
         <div class="legend-card" style="margin-top:12px;">
-          <div class="legend-title" style="text-align:left;">World food regions</div>
+          <div class="legend-title" style="text-align:left;">Weltküche Regionen</div>
           <div class="legend-list" style="justify-content:flex-start;">
-            <span class="constraint-badge">mediterranean</span>
-            <span class="constraint-badge">eastern_european</span>
-            <span class="constraint-badge">scandinavian</span>
-            <span class="constraint-badge">germanic</span>
-            <span class="constraint-badge">north_american</span>
-            <span class="constraint-badge">middle_eastern</span>
-            <span class="constraint-badge">latin_american</span>
-            <span class="constraint-badge">south_east_asian</span>
-            <span class="constraint-badge">east_asian</span>
-            <span class="constraint-badge">african</span>
-            <span class="constraint-badge">caribbean</span>
+            <span class="constraint-badge">Mediterran</span>
+            <span class="constraint-badge">Osteuropäisch</span>
+            <span class="constraint-badge">Skandinavisch</span>
+            <span class="constraint-badge">Germanisch</span>
+            <span class="constraint-badge">Nordamerikanisch</span>
+            <span class="constraint-badge">Nahost</span>
+            <span class="constraint-badge">Lateinamerikanisch</span>
+            <span class="constraint-badge">Südostasiatisch</span>
+            <span class="constraint-badge">Ostasiatisch</span>
+            <span class="constraint-badge">Afrikanisch</span>
+            <span class="constraint-badge">Karibisch</span>
           </div>
         </div>
       </div>
@@ -49,9 +49,9 @@
       <div class="button-container">
       <!-- Row 1: Prev | New Randomization | Next -->
       <div class="nav-randomize-row">
-        <button class="prev-week-btn align-left" onclick="previousWeek()" id="prevWeekBtn">← Previous Week</button>
-        <button class="randomize-btn" onclick="newRandomization()" id="randomizeBtn">New Randomization</button>
-        <button class="next-week-btn align-right" onclick="nextWeek()" id="nextWeekBtn">Next Week →</button>
+        <button class="prev-week-btn align-left" onclick="previousWeek()" id="prevWeekBtn">← Vorherige Woche</button>
+        <button class="randomize-btn" onclick="newRandomization()" id="randomizeBtn">Neue Zufallsauswahl</button>
+        <button class="next-week-btn align-right" onclick="nextWeek()" id="nextWeekBtn">Nächste Woche →</button>
       </div>
 
       <!-- Row 2: Favorites, Banned (Blue pastels) -->
@@ -62,7 +62,7 @@
           id="favoritesBtn"
           style="display: none"
         >
-          ❤️ Favorites
+          ❤️ Favoriten
         </button>
         <button
           class="banned-btn"
@@ -70,7 +70,7 @@
           id="bannedBtn"
           style="display: none"
         >
-          🚫 Banned
+          🚫 Verbannt
         </button>
       </div>
 
@@ -82,7 +82,7 @@
           id="exportBtn"
           style="display: none"
         >
-          📋 View Shopping List
+          📋 Einkaufsliste anzeigen
         </button>
       </div>
 
@@ -93,14 +93,14 @@
           onclick="saveState()"
           id="saveBtn"
         >
-          💾 Save State
+          💾 Zustand speichern
         </button>
         <button
           class="load-btn"
           onclick="loadState()"
           id="loadBtn"
         >
-          📂 Load State
+          📂 Zustand laden
         </button>
       </div>
       </div>
@@ -113,19 +113,19 @@
     <div class="meals-container" id="mealsContainer"></div>
     <div id="constraintsLegend">
       <div class="legend-card">
-        <div class="legend-title">Weekly constraints to satisfy</div>
+        <div class="legend-title">Wöchentliche Beschränkungen zu erfüllen</div>
         <div class="legend-list">
-          <span class="constraint-badge badge-pasta">pasta</span>
-          <span class="constraint-badge badge-green_vegetable">green_vegetable</span>
-          <span class="constraint-badge badge-oven">oven</span>
-          <span class="constraint-badge badge-grain">grain</span>
-          <span class="constraint-badge badge-seasonal">seasonal</span>
-          <span class="constraint-badge badge-salad">salad</span>
-          <span class="constraint-badge badge-beans_lentils">beans_lentils</span>
-          <span class="constraint-badge badge-eggs">eggs</span>
-          <span class="constraint-badge badge-dairy">dairy</span>
-          <span class="constraint-badge">3× vegetarian</span>
-          <span class="constraint-badge">1× meat/poultry/fish</span>
+          <span class="constraint-badge badge-pasta">Nudeln</span>
+          <span class="constraint-badge badge-green_vegetable">Grünes Gemüse</span>
+          <span class="constraint-badge badge-oven">Backofen</span>
+          <span class="constraint-badge badge-grain">Getreide</span>
+          <span class="constraint-badge badge-seasonal">Saisonal</span>
+          <span class="constraint-badge badge-salad">Salat</span>
+          <span class="constraint-badge badge-beans_lentils">Bohnen/Linsen</span>
+          <span class="constraint-badge badge-eggs">Eier</span>
+          <span class="constraint-badge badge-dairy">Milchprodukte</span>
+          <span class="constraint-badge">3× vegetarisch</span>
+          <span class="constraint-badge">1× Fleisch/Geflügel/Fisch</span>
         </div>
       </div>
     </div>
@@ -133,9 +133,9 @@
     <script src="meals.js"></script>
     <div class="list-container" id="favoritesContainer">
       <div class="list-header">
-        <h2>❤️ Favorite Meals</h2>
+        <h2>❤️ Lieblingsgerichte</h2>
         <button class="back-btn" onclick="showMainView()">
-          ← Back to Meal Planner
+          ← Zurück zum Mahlzeitenplaner
         </button>
       </div>
       <div class="meals-container show" id="favoritesMealsGrid"></div>
@@ -143,9 +143,9 @@
 
     <div class="list-container" id="bannedContainer">
       <div class="list-header">
-        <h2>🚫 Banned Meals</h2>
+        <h2>🚫 Verbannte Gerichte</h2>
         <button class="back-btn" onclick="showMainView()">
-          ← Back to Meal Planner
+          ← Zurück zum Mahlzeitenplaner
         </button>
       </div>
       <div class="meals-container show" id="bannedMealsGrid"></div>
@@ -153,16 +153,16 @@
 
     <div class="list-container" id="shoppingListContainer">
       <div class="list-header">
-        <h2>📋 Shopping List</h2>
+        <h2>📋 Einkaufsliste</h2>
         <div class="shopping-list-buttons">
           <button class="back-btn" onclick="showMainView()">
-            ← Back to Meal Planner
+            ← Zurück zum Mahlzeitenplaner
           </button>
           <button class="download-btn" onclick="downloadShoppingList()">
-            📥 Download List
+            📥 Liste herunterladen
           </button>
           <button class="copy-short-list-btn" onclick="copyShortList()">
-            📋 Save as Short List
+            📋 Als Kurze Liste speichern
           </button>
         </div>
       </div>

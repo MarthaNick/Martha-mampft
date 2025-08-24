@@ -9,38 +9,36 @@ let mealRatings = {}; // Store ratings for each meal
 let startingCalendarWeek = getCurrentWeekNumber(); // Track when meal planning started
 let deactivatedMealsByWeek = {};
 
-function getFlagForTitle(title) {
-    const t = title.toLowerCase();
-    // Direct country keywords
-    if (t.includes('italian') || t.includes('osso buco') || t.includes('parmigiana') || t.includes('saltimbocca') || t.includes('moussaka')) return '🇮🇹';
-    if (t.includes('polish') || t.includes('pierogi') || t.includes('kapusta')) return '🇵🇱';
-    if (t.includes('swedish') || t.includes('janssons') || t.includes('meatballs')) return '🇸🇪';
-    if (t.includes('norwegian')) return '🇳🇴';
-    if (t.includes('german') || t.includes('sauerbraten')) return '🇩🇪';
-    if (t.includes('austrian') || t.includes('wiener schnitzel') || t.includes('kaiserschmarrn')) return '🇦🇹';
-    if (t.includes('swiss') || t.includes('rösti') || t.includes('roesti') || t.includes('gruyère')) return '🇨🇭';
-    if (t.includes('new england') || t.includes('bbq') || t.includes('american') || t.includes('canadian') || t.includes('tourtière')) return '🇺🇸';
-    if (t.includes('canadian')) return '🇨🇦';
-    if (t.includes('moroccan') || t.includes('tagine')) return '🇲🇦';
-    if (t.includes('brazilian') || t.includes('feijoada')) return '🇧🇷';
-    if (t.includes('indian') || t.includes('dal makhani') || t.includes('butter chicken')) return '🇮🇳';
-    if (t.includes('korean') || t.includes('bulgogi') || t.includes('bibimbap') || t.includes('kimchi')) return '🇰🇷';
-    if (t.includes('japanese') || t.includes('ramen') || t.includes('teriyaki')) return '🇯🇵';
-    if (t.includes('ethiopian') || t.includes('injera') || t.includes('doro wat')) return '🇪🇹';
-    if (t.includes('jamaican') || t.includes('jerk') || t.includes('callaloo')) return '🇯🇲';
-    if (t.includes('lebanese') || t.includes('fattoush')) return '🇱🇧';
-    if (t.includes('mexican') || t.includes('chiles rellenos')) return '🇲🇽';
-    if (t.includes('turkish') || t.includes('imam bayildi')) return '🇹🇷';
-    if (t.includes('greek') || t.includes('moussaka')) return '🇬🇷';
-    if (t.includes('ukrainian') || t.includes('borscht')) return '🇺🇦';
-    if (t.includes('danish') || t.includes('smørrebrød') || t.includes('smorrebrod')) return '🇩🇰';
-    if (t.includes('peruvian') || t.includes('quinoa soup')) return '🇵🇪';
-    if (t.includes('thai') || t.includes('papaya salad')) return '🇹🇭';
-    if (t.includes('cuban')) return '🇨🇺';
-    if (t.includes('norwegian')) return '🇳🇴';
-    if (t.includes('korean')) return '🇰🇷';
-    // Region fallbacks
-    return '🌍';
+function getFlagForRegion(region) {
+    const regionFlags = {
+        'mediterranean': '🇮🇹',
+        'eastern_european': '🇵🇱',
+        'scandinavian': '🇸🇪',
+        'germanic': '🇩🇪',
+        'north_american': '🇺🇸',
+        'middle_eastern': '🇹🇷',
+        'latin_american': '🇲🇽',
+        'south_east_asian': '🇮🇳',
+        'east_asian': '🇯🇵',
+        'african': '🇪🇹',
+        'caribbean': '🇯🇲'
+    };
+    return regionFlags[region] || '🌍';
+}
+
+function getConstraintLabel(constraint) {
+    const labels = {
+        'pasta': 'Nudeln',
+        'green_vegetable': 'Grünes Gemüse',
+        'oven': 'Backofen',
+        'grain': 'Getreide',
+        'seasonal': 'Saisonal',
+        'salad': 'Salat',
+        'beans_lentils': 'Bohnen/Linsen',
+        'eggs': 'Eier',
+        'dairy': 'Milchprodukte'
+    };
+    return labels[constraint] || constraint;
 }
 
 function getCurrentWeekNumber() {
@@ -161,10 +159,10 @@ function displayMeals(meals) {
             mealCard.innerHTML = `
                 <img src="${meal.image}" alt="${meal.title}" class="meal-image">
                 <div class="meal-title">
-                    ${getFlagForTitle(meal.title)} ${meal.title}
+                    ${getFlagForRegion(meal.region)} ${meal.title}
                 </div>
                 <div class="constraints-row">
-                    ${(meal.constraints || []).map(c => `<span class=\"constraint-badge badge-${c}\">${c}</span>`).join('')}
+                    ${(meal.constraints || []).map(c => `<span class=\"constraint-badge badge-${c}\">${getConstraintLabel(c)}</span>`).join('')}
                 </div>
                 <div class="rating-buttons">
                     <button class="thumb-btn thumb-up ${thumbUpActive}" onclick="rateMeal('${meal.title}', 'up')">
@@ -230,7 +228,7 @@ function updateRatingButtons() {
 
 function updateWeekDisplay() {
     const calendarWeek = getCalendarWeekForMealWeek(currentWeek);
-    document.getElementById('weekText').textContent = `Calendar Week ${calendarWeek}`;
+    document.getElementById('weekText').textContent = `Kalenderwoche ${calendarWeek}`;
 }
 
 function updateButtonStates() {
@@ -296,7 +294,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function surpriseMe() {
     if (favorites.length < 4) {
-        alert('You need at least 4 favorite meals to use Surprise Me!');
+        alert('Du brauchst mindestens 4 Lieblingsgerichte für die Überraschung!');
         return;
     }
 
@@ -338,7 +336,7 @@ function surpriseMe() {
 
 function showShoppingList() {
     if (!allWeeklyMeals[currentWeek]) {
-        alert('No meals generated for this week!');
+        alert('Keine Mahlzeiten für diese Woche generiert!');
         return;
     }
 
@@ -365,13 +363,13 @@ function generateShoppingListContent() {
 
     // Define ingredient categories in typical supermarket order
     const categories = {
-        'Fresh Vegetables & Herbs': ['asparagus', 'spinach', 'arugula', 'rucola', 'kale', 'brussels sprouts', 'cabbage', 'peas', 'broccoli', 'zucchini', 'bell peppers', 'eggplants', 'cucumber', 'tomatoes', 'cherry tomatoes', 'onions', 'red onion', 'garlic', 'ginger', 'carrots', 'pumpkin', 'winter squash', 'seasonal vegetables', 'spring vegetables', 'seasonal root vegetables', 'mixed seasonal greens', 'mixed greens', 'basil', 'parsley', 'chives', 'thyme', 'rosemary', 'sage', 'oregano', 'dill', 'mint', 'herbs', 'seasonal herbs', 'fresh herbs', 'bok choy', 'scallions', 'cilantro', 'collard greens', 'callaloo leaves', 'wakame seaweed', 'nori seaweed', 'radishes', 'celery', 'bean sprouts', 'green papaya'],
-        'Fruits': ['lemons', 'apples', 'rhubarb', 'plums', 'lime', 'mixed berries', 'avocados', 'korean pear', 'dried apricots', 'dried cranberries', 'dried fruits'],
-        'Meat & Fish': ['salmon fillets', 'chicken breast', 'cod fillets', 'turkey breast', 'duck breast', 'pork tenderloin', 'veal shanks', 'kielbasa sausage', 'ground beef', 'ground pork', 'veal cutlets', 'beef brisket', 'lamb shoulder', 'beef short ribs', 'chorizo', 'chicken thighs', 'beef ribeye', 'chicken pieces', 'prosciutto', 'fresh clams', 'sea bass fillets', 'beef stew meat', 'pork chops', 'halibut fillets', 'trout fillets', 'swordfish steaks', 'rack of lamb', 'sole fillets', 'pork shoulder', 'beef roast', 'lamb shanks', 'lamb chops'],
-        'Dairy & Eggs': ['eggs', 'butter', 'milk', 'heavy cream', 'mascarpone cheese', 'ricotta cheese', 'mozzarella cheese', 'parmesan cheese', 'gruyere cheese', 'goat cheese', 'feta cheese', 'cheddar cheese', 'sour cream', 'cream cheese', 'monterey jack cheese', 'soft-boiled eggs', 'hard-boiled eggs'],
-        'Grains & Bread': ['wild rice', 'quinoa', 'pearl barley', 'brown rice', 'bulgur', 'basmati rice', 'arborio rice', 'pasta', 'lasagna sheets', 'bread', 'pie crust', 'puff pastry', 'breadcrumbs', 'flour', 'short grain rice', 'white rice', 'jasmine rice', 'couscous', 'rye bread', 'sourdough bread', 'naan bread', 'pita bread', 'injera bread', 'macaroni', 'spaetzle', 'ramen noodles', 'orzo pasta', 'egg noodles', 'corn tortillas', 'pierogi'],
-        'Legumes & Nuts': ['chickpeas', 'green lentils', 'red lentils', 'white beans', 'black beans', 'pine nuts', 'pumpkin seeds', 'kidney beans', 'black lentils', 'mixed lentils', 'walnuts', 'peanuts', 'sliced almonds'],
-        'Pantry & Condiments': ['olive oil', 'vegetable oil', 'salt', 'black pepper', 'nutmeg', 'curry powder', 'dijon mustard', 'balsamic vinegar', 'red wine vinegar', 'honey', 'sugar', 'tomato sauce', 'tomatoes (canned)', 'coconut cream', 'white wine', 'vegetable broth', 'coconut milk', 'soy sauce', 'sesame oil', 'teriyaki sauce', 'miso paste', 'garam masala', 'jerk seasoning', 'berbere spice', 'moroccan spice blend', 'enchilada sauce', 'bbq sauce', 'maple syrup', 'sumac', 'tomato salsa', 'fish sauce', 'gochujang', 'sesame seeds', 'lingonberry jam', 'red wine', 'beef broth', 'chicken broth', 'kimchi', 'sauerkraut', 'capers', 'kalamata olives', 'preserved lemons', 'tomato paste', 'gingersnap cookies', 'bay leaves', 'juniper berries', 'caraway seeds', 'cumin', 'turmeric', 'paprika', 'allspice', 'vanilla extract', 'baking powder', 'powdered sugar', 'brown sugar', 'palm sugar', 'scotch bonnet pepper', 'thai chilies', 'pickled beets']
+        'Frisches Gemüse & Kräuter': ['asparagus', 'spinach', 'arugula', 'rucola', 'kale', 'brussels sprouts', 'cabbage', 'peas', 'broccoli', 'zucchini', 'bell peppers', 'eggplants', 'cucumber', 'tomatoes', 'cherry tomatoes', 'onions', 'red onion', 'garlic', 'ginger', 'carrots', 'pumpkin', 'winter squash', 'seasonal vegetables', 'spring vegetables', 'seasonal root vegetables', 'mixed seasonal greens', 'mixed greens', 'basil', 'parsley', 'chives', 'thyme', 'rosemary', 'sage', 'oregano', 'dill', 'mint', 'herbs', 'seasonal herbs', 'fresh herbs', 'bok choy', 'scallions', 'cilantro', 'collard greens', 'callaloo leaves', 'wakame seaweed', 'nori seaweed', 'radishes', 'celery', 'bean sprouts', 'green papaya'],
+        'Obst': ['lemons', 'apples', 'rhubarb', 'plums', 'lime', 'mixed berries', 'avocados', 'korean pear', 'dried apricots', 'dried cranberries', 'dried fruits'],
+        'Fleisch & Fisch': ['salmon fillets', 'chicken breast', 'cod fillets', 'turkey breast', 'duck breast', 'pork tenderloin', 'veal shanks', 'kielbasa sausage', 'ground beef', 'ground pork', 'veal cutlets', 'beef brisket', 'lamb shoulder', 'beef short ribs', 'chorizo', 'chicken thighs', 'beef ribeye', 'chicken pieces', 'prosciutto', 'fresh clams', 'sea bass fillets', 'beef stew meat', 'pork chops', 'halibut fillets', 'trout fillets', 'swordfish steaks', 'rack of lamb', 'sole fillets', 'pork shoulder', 'beef roast', 'lamb shanks', 'lamb chops'],
+        'Milchprodukte & Eier': ['eggs', 'butter', 'milk', 'heavy cream', 'mascarpone cheese', 'ricotta cheese', 'mozzarella cheese', 'parmesan cheese', 'gruyere cheese', 'goat cheese', 'feta cheese', 'cheddar cheese', 'sour cream', 'cream cheese', 'monterey jack cheese', 'soft-boiled eggs', 'hard-boiled eggs'],
+        'Getreide & Brot': ['wild rice', 'quinoa', 'pearl barley', 'brown rice', 'bulgur', 'basmati rice', 'arborio rice', 'pasta', 'lasagna sheets', 'bread', 'pie crust', 'puff pastry', 'breadcrumbs', 'flour', 'short grain rice', 'white rice', 'jasmine rice', 'couscous', 'rye bread', 'sourdough bread', 'naan bread', 'pita bread', 'injera bread', 'macaroni', 'spaetzle', 'ramen noodles', 'orzo pasta', 'egg noodles', 'corn tortillas', 'pierogi'],
+        'Hülsenfrüchte & Nüsse': ['chickpeas', 'green lentils', 'red lentils', 'white beans', 'black beans', 'pine nuts', 'pumpkin seeds', 'kidney beans', 'black lentils', 'mixed lentils', 'walnuts', 'peanuts', 'sliced almonds'],
+        'Vorratskammer & Gewürze': ['olive oil', 'vegetable oil', 'salt', 'black pepper', 'nutmeg', 'curry powder', 'dijon mustard', 'balsamic vinegar', 'red wine vinegar', 'honey', 'sugar', 'tomato sauce', 'tomatoes (canned)', 'coconut cream', 'white wine', 'vegetable broth', 'coconut milk', 'soy sauce', 'sesame oil', 'teriyaki sauce', 'miso paste', 'garam masala', 'jerk seasoning', 'berbere spice', 'moroccan spice blend', 'enchilada sauce', 'bbq sauce', 'maple syrup', 'sumac', 'tomato salsa', 'fish sauce', 'gochujang', 'sesame seeds', 'lingonberry jam', 'red wine', 'beef broth', 'chicken broth', 'kimchi', 'sauerkraut', 'capers', 'kalamata olives', 'preserved lemons', 'tomato paste', 'gingersnap cookies', 'bay leaves', 'juniper berries', 'caraway seeds', 'cumin', 'turmeric', 'paprika', 'allspice', 'vanilla extract', 'baking powder', 'powdered sugar', 'brown sugar', 'palm sugar', 'scotch bonnet pepper', 'thai chilies', 'pickled beets']
     };
 
     // Aggregate all ingredients for active meals and track per-meal amounts
@@ -424,18 +422,18 @@ function generateShoppingListContent() {
     // Generate HTML content
     let htmlContent = `
         <div class="shopping-week-info">
-            <h2>Shopping List - Calendar Week ${calendarWeek}</h2>
-            <p><strong>Generated on ${new Date().toLocaleDateString()}</strong></p>
+            <h2>Einkaufsliste - Kalenderwoche ${calendarWeek}</h2>
+            <p><strong>Erstellt am ${new Date().toLocaleDateString()}</strong></p>
         </div>
 
         <div class="shopping-meals-list">
-            <h3>📋 This Week's Meals:</h3>
+            <h3>📋 Mahlzeiten dieser Woche:</h3>
             ${weekMeals.map((meal, idx) => `
                 <div class=\"shopping-meal-item\"> 
-                    <span><span class=\"meal-badge meal-badge-${idx+1}\">${idx+1}</span>${getFlagForTitle(meal.title)} ${meal.title}</span>
+                    <span><span class=\"meal-badge meal-badge-${idx+1}\">${idx+1}</span>${getFlagForRegion(meal.region)} ${meal.title}</span>
                     <span class=\"shopping-meal-actions\"> 
                         <span class=\"portion-count\">(4 portions)</span>
-                        <button class=\"meal-toggle-btn ${deactivatedSet.has(meal.title) ? 'deactivated' : ''}\" onclick=\"toggleMealActive('${meal.title}')\">${deactivatedSet.has(meal.title) ? 'Activate' : 'Deactivate'}</button>
+                        <button class=\"meal-toggle-btn ${deactivatedSet.has(meal.title) ? 'deactivated' : ''}\" onclick=\"toggleMealActive('${meal.title}')\">${deactivatedSet.has(meal.title) ? 'Aktivieren' : 'Deaktivieren'}</button>
                     </span> 
                 </div>
             `).join('')}
@@ -450,8 +448,8 @@ function generateShoppingListContent() {
                     <table class=\"shopping-table\"> 
                         <thead>
                             <tr>
-                                <th>Ingredient</th>
-                                <th class=\"amount-cell\">Total</th>
+                                <th>Zutat</th>
+                                <th class=\"amount-cell\">Gesamt</th>
                                 ${weekMeals.map((m, idx) => `<th class=\"center meal-header-${idx+1}\">${idx+1}</th>`).join('')}
                             </tr>
                         </thead>
@@ -489,13 +487,13 @@ function downloadShoppingList() {
 
     // Define ingredient categories in typical supermarket order
     const categories = {
-        'Fresh Vegetables & Herbs': ['asparagus', 'spinach', 'arugula', 'rucola', 'kale', 'brussels sprouts', 'cabbage', 'peas', 'broccoli', 'zucchini', 'bell peppers', 'eggplants', 'cucumber', 'tomatoes', 'cherry tomatoes', 'onions', 'red onion', 'garlic', 'ginger', 'carrots', 'pumpkin', 'winter squash', 'seasonal vegetables', 'spring vegetables', 'seasonal root vegetables', 'mixed seasonal greens', 'mixed greens', 'basil', 'parsley', 'chives', 'thyme', 'rosemary', 'sage', 'oregano', 'dill', 'mint', 'herbs', 'seasonal herbs', 'fresh herbs', 'bok choy', 'scallions', 'cilantro', 'collard greens', 'callaloo leaves', 'wakame seaweed', 'nori seaweed', 'radishes', 'celery', 'bean sprouts', 'green papaya'],
-        'Fruits': ['lemons', 'apples', 'rhubarb', 'plums', 'lime', 'mixed berries', 'avocados', 'korean pear', 'dried apricots', 'dried cranberries', 'dried fruits'],
-        'Meat & Fish': ['salmon fillets', 'chicken breast', 'cod fillets', 'turkey breast', 'duck breast', 'pork tenderloin', 'veal shanks', 'kielbasa sausage', 'ground beef', 'ground pork', 'veal cutlets', 'beef brisket', 'lamb shoulder', 'beef short ribs', 'chorizo', 'chicken thighs', 'beef ribeye', 'chicken pieces', 'prosciutto', 'fresh clams', 'sea bass fillets', 'beef stew meat', 'pork chops', 'halibut fillets', 'trout fillets', 'swordfish steaks', 'rack of lamb', 'sole fillets', 'pork shoulder', 'beef roast', 'lamb shanks', 'lamb chops'],
-        'Dairy & Eggs': ['eggs', 'butter', 'milk', 'heavy cream', 'mascarpone cheese', 'ricotta cheese', 'mozzarella cheese', 'parmesan cheese', 'gruyere cheese', 'goat cheese', 'feta cheese', 'cheddar cheese', 'sour cream', 'cream cheese', 'monterey jack cheese', 'soft-boiled eggs', 'hard-boiled eggs'],
-        'Grains & Bread': ['wild rice', 'quinoa', 'pearl barley', 'brown rice', 'bulgur', 'basmati rice', 'arborio rice', 'pasta', 'lasagna sheets', 'bread', 'pie crust', 'puff pastry', 'breadcrumbs', 'flour', 'short grain rice', 'white rice', 'jasmine rice', 'couscous', 'rye bread', 'sourdough bread', 'naan bread', 'pita bread', 'injera bread', 'macaroni', 'spaetzle', 'ramen noodles', 'orzo pasta', 'egg noodles', 'corn tortillas', 'pierogi'],
-        'Legumes & Nuts': ['chickpeas', 'green lentils', 'red lentils', 'white beans', 'black beans', 'pine nuts', 'pumpkin seeds', 'kidney beans', 'black lentils', 'mixed lentils', 'walnuts', 'peanuts', 'sliced almonds'],
-        'Pantry & Condiments': ['olive oil', 'vegetable oil', 'salt', 'black pepper', 'nutmeg', 'curry powder', 'dijon mustard', 'balsamic vinegar', 'red wine vinegar', 'honey', 'sugar', 'tomato sauce', 'tomatoes (canned)', 'coconut cream', 'white wine', 'vegetable broth', 'coconut milk', 'soy sauce', 'sesame oil', 'teriyaki sauce', 'miso paste', 'garam masala', 'jerk seasoning', 'berbere spice', 'moroccan spice blend', 'enchilada sauce', 'bbq sauce', 'maple syrup', 'sumac', 'tomato salsa', 'fish sauce', 'gochujang', 'sesame seeds', 'lingonberry jam', 'red wine', 'beef broth', 'chicken broth', 'kimchi', 'sauerkraut', 'capers', 'kalamata olives', 'preserved lemons', 'tomato paste', 'gingersnap cookies', 'bay leaves', 'juniper berries', 'caraway seeds', 'cumin', 'turmeric', 'paprika', 'allspice', 'vanilla extract', 'baking powder', 'powdered sugar', 'brown sugar', 'palm sugar', 'scotch bonnet pepper', 'thai chilies', 'pickled beets']
+        'Frisches Gemüse & Kräuter': ['asparagus', 'spinach', 'arugula', 'rucola', 'kale', 'brussels sprouts', 'cabbage', 'peas', 'broccoli', 'zucchini', 'bell peppers', 'eggplants', 'cucumber', 'tomatoes', 'cherry tomatoes', 'onions', 'red onion', 'garlic', 'ginger', 'carrots', 'pumpkin', 'winter squash', 'seasonal vegetables', 'spring vegetables', 'seasonal root vegetables', 'mixed seasonal greens', 'mixed greens', 'basil', 'parsley', 'chives', 'thyme', 'rosemary', 'sage', 'oregano', 'dill', 'mint', 'herbs', 'seasonal herbs', 'fresh herbs', 'bok choy', 'scallions', 'cilantro', 'collard greens', 'callaloo leaves', 'wakame seaweed', 'nori seaweed', 'radishes', 'celery', 'bean sprouts', 'green papaya'],
+        'Obst': ['lemons', 'apples', 'rhubarb', 'plums', 'lime', 'mixed berries', 'avocados', 'korean pear', 'dried apricots', 'dried cranberries', 'dried fruits'],
+        'Fleisch & Fisch': ['salmon fillets', 'chicken breast', 'cod fillets', 'turkey breast', 'duck breast', 'pork tenderloin', 'veal shanks', 'kielbasa sausage', 'ground beef', 'ground pork', 'veal cutlets', 'beef brisket', 'lamb shoulder', 'beef short ribs', 'chorizo', 'chicken thighs', 'beef ribeye', 'chicken pieces', 'prosciutto', 'fresh clams', 'sea bass fillets', 'beef stew meat', 'pork chops', 'halibut fillets', 'trout fillets', 'swordfish steaks', 'rack of lamb', 'sole fillets', 'pork shoulder', 'beef roast', 'lamb shanks', 'lamb chops'],
+        'Milchprodukte & Eier': ['eggs', 'butter', 'milk', 'heavy cream', 'mascarpone cheese', 'ricotta cheese', 'mozzarella cheese', 'parmesan cheese', 'gruyere cheese', 'goat cheese', 'feta cheese', 'cheddar cheese', 'sour cream', 'cream cheese', 'monterey jack cheese', 'soft-boiled eggs', 'hard-boiled eggs'],
+        'Getreide & Brot': ['wild rice', 'quinoa', 'pearl barley', 'brown rice', 'bulgur', 'basmati rice', 'arborio rice', 'pasta', 'lasagna sheets', 'bread', 'pie crust', 'puff pastry', 'breadcrumbs', 'flour', 'short grain rice', 'white rice', 'jasmine rice', 'couscous', 'rye bread', 'sourdough bread', 'naan bread', 'pita bread', 'injera bread', 'macaroni', 'spaetzle', 'ramen noodles', 'orzo pasta', 'egg noodles', 'corn tortillas', 'pierogi'],
+        'Hülsenfrüchte & Nüsse': ['chickpeas', 'green lentils', 'red lentils', 'white beans', 'black beans', 'pine nuts', 'pumpkin seeds', 'kidney beans', 'black lentils', 'mixed lentils', 'walnuts', 'peanuts', 'sliced almonds'],
+        'Vorratskammer & Gewürze': ['olive oil', 'vegetable oil', 'salt', 'black pepper', 'nutmeg', 'curry powder', 'dijon mustard', 'balsamic vinegar', 'red wine vinegar', 'honey', 'sugar', 'tomato sauce', 'tomatoes (canned)', 'coconut cream', 'white wine', 'vegetable broth', 'coconut milk', 'soy sauce', 'sesame oil', 'teriyaki sauce', 'miso paste', 'garam masala', 'jerk seasoning', 'berbere spice', 'moroccan spice blend', 'enchilada sauce', 'bbq sauce', 'maple syrup', 'sumac', 'tomato salsa', 'fish sauce', 'gochujang', 'sesame seeds', 'lingonberry jam', 'red wine', 'beef broth', 'chicken broth', 'kimchi', 'sauerkraut', 'capers', 'kalamata olives', 'preserved lemons', 'tomato paste', 'gingersnap cookies', 'bay leaves', 'juniper berries', 'caraway seeds', 'cumin', 'turmeric', 'paprika', 'allspice', 'vanilla extract', 'baking powder', 'powdered sugar', 'brown sugar', 'palm sugar', 'scotch bonnet pepper', 'thai chilies', 'pickled beets']
     };
 
     // Aggregate all ingredients from active meals only
@@ -616,11 +614,11 @@ function downloadShoppingList() {
     </style>
 </head>
 <body>
-    <h1>🛒 Shopping List - Calendar Week ${calendarWeek}</h1>
-    <p><strong>Calendar Week ${calendarWeek}</strong> | Generated on ${new Date().toLocaleDateString()}</p>
+    <h1>🛒 Einkaufsliste - Kalenderwoche ${calendarWeek}</h1>
+    <p><strong>Kalenderwoche ${calendarWeek}</strong> | Erstellt am ${new Date().toLocaleDateString()}</p>
 
     <div class="meal-list">
-        <h2>📋 This Week's Meals:</h2>
+        <h2>📋 Gerichte dieser Woche:</h2>
         ${weekMeals.map(meal => `
             <div class="meal-item">
                 <span>• ${meal.title}</span>
@@ -664,7 +662,7 @@ function downloadShoppingList() {
     URL.revokeObjectURL(url);
 
     // Show success message
-    alert('Shopping list downloaded! The file will open in your browser where you can print it as PDF.');
+    alert('Einkaufsliste heruntergeladen! Die Datei wird in Ihrem Browser geöffnet, wo Sie sie als PDF drucken können.');
 }
 
 function copyShortList() {
@@ -674,13 +672,13 @@ function copyShortList() {
 
     // Define ingredient categories in typical supermarket order
     const categories = {
-        'Fresh Vegetables & Herbs': ['asparagus', 'spinach', 'arugula', 'rucola', 'kale', 'brussels sprouts', 'cabbage', 'peas', 'broccoli', 'zucchini', 'bell peppers', 'eggplants', 'cucumber', 'tomatoes', 'cherry tomatoes', 'onions', 'red onion', 'garlic', 'ginger', 'carrots', 'pumpkin', 'winter squash', 'seasonal vegetables', 'spring vegetables', 'seasonal root vegetables', 'mixed seasonal greens', 'mixed greens', 'basil', 'parsley', 'chives', 'thyme', 'rosemary', 'sage', 'oregano', 'dill', 'mint', 'herbs', 'seasonal herbs', 'fresh herbs', 'bok choy', 'scallions', 'cilantro', 'collard greens', 'callaloo leaves', 'wakame seaweed', 'nori seaweed', 'radishes', 'celery', 'bean sprouts', 'green papaya'],
-        'Fruits': ['lemons', 'apples', 'rhubarb', 'plums', 'lime', 'mixed berries', 'avocados', 'korean pear', 'dried apricots', 'dried cranberries', 'dried fruits'],
-        'Meat & Fish': ['salmon fillets', 'chicken breast', 'cod fillets', 'turkey breast', 'duck breast', 'pork tenderloin', 'veal shanks', 'kielbasa sausage', 'ground beef', 'ground pork', 'veal cutlets', 'beef brisket', 'lamb shoulder', 'beef short ribs', 'chorizo', 'chicken thighs', 'beef ribeye', 'chicken pieces', 'prosciutto', 'fresh clams', 'sea bass fillets', 'beef stew meat', 'pork chops', 'halibut fillets', 'trout fillets', 'swordfish steaks', 'rack of lamb', 'sole fillets', 'pork shoulder', 'beef roast', 'lamb shanks', 'lamb chops'],
-        'Dairy & Eggs': ['eggs', 'butter', 'milk', 'heavy cream', 'mascarpone cheese', 'ricotta cheese', 'mozzarella cheese', 'parmesan cheese', 'gruyere cheese', 'goat cheese', 'feta cheese', 'cheddar cheese', 'sour cream', 'cream cheese', 'monterey jack cheese', 'soft-boiled eggs', 'hard-boiled eggs'],
-        'Grains & Bread': ['wild rice', 'quinoa', 'pearl barley', 'brown rice', 'bulgur', 'basmati rice', 'arborio rice', 'pasta', 'lasagna sheets', 'bread', 'pie crust', 'puff pastry', 'breadcrumbs', 'flour', 'short grain rice', 'white rice', 'jasmine rice', 'couscous', 'rye bread', 'sourdough bread', 'naan bread', 'pita bread', 'injera bread', 'macaroni', 'spaetzle', 'ramen noodles', 'orzo pasta', 'egg noodles', 'corn tortillas', 'pierogi'],
-        'Legumes & Nuts': ['chickpeas', 'green lentils', 'red lentils', 'white beans', 'black beans', 'pine nuts', 'pumpkin seeds', 'kidney beans', 'black lentils', 'mixed lentils', 'walnuts', 'peanuts', 'sliced almonds'],
-        'Pantry & Condiments': ['olive oil', 'vegetable oil', 'salt', 'black pepper', 'nutmeg', 'curry powder', 'dijon mustard', 'balsamic vinegar', 'red wine vinegar', 'honey', 'sugar', 'tomato sauce', 'tomatoes (canned)', 'coconut cream', 'white wine', 'vegetable broth', 'coconut milk', 'soy sauce', 'sesame oil', 'teriyaki sauce', 'miso paste', 'garam masala', 'jerk seasoning', 'berbere spice', 'moroccan spice blend', 'enchilada sauce', 'bbq sauce', 'maple syrup', 'sumac', 'tomato salsa', 'fish sauce', 'gochujang', 'sesame seeds', 'lingonberry jam', 'red wine', 'beef broth', 'chicken broth', 'kimchi', 'sauerkraut', 'capers', 'kalamata olives', 'preserved lemons', 'tomato paste', 'gingersnap cookies', 'bay leaves', 'juniper berries', 'caraway seeds', 'cumin', 'turmeric', 'paprika', 'allspice', 'vanilla extract', 'baking powder', 'powdered sugar', 'brown sugar', 'palm sugar', 'scotch bonnet pepper', 'thai chilies', 'pickled beets']
+        'Frisches Gemüse & Kräuter': ['asparagus', 'spinach', 'arugula', 'rucola', 'kale', 'brussels sprouts', 'cabbage', 'peas', 'broccoli', 'zucchini', 'bell peppers', 'eggplants', 'cucumber', 'tomatoes', 'cherry tomatoes', 'onions', 'red onion', 'garlic', 'ginger', 'carrots', 'pumpkin', 'winter squash', 'seasonal vegetables', 'spring vegetables', 'seasonal root vegetables', 'mixed seasonal greens', 'mixed greens', 'basil', 'parsley', 'chives', 'thyme', 'rosemary', 'sage', 'oregano', 'dill', 'mint', 'herbs', 'seasonal herbs', 'fresh herbs', 'bok choy', 'scallions', 'cilantro', 'collard greens', 'callaloo leaves', 'wakame seaweed', 'nori seaweed', 'radishes', 'celery', 'bean sprouts', 'green papaya'],
+        'Obst': ['lemons', 'apples', 'rhubarb', 'plums', 'lime', 'mixed berries', 'avocados', 'korean pear', 'dried apricots', 'dried cranberries', 'dried fruits'],
+        'Fleisch & Fisch': ['salmon fillets', 'chicken breast', 'cod fillets', 'turkey breast', 'duck breast', 'pork tenderloin', 'veal shanks', 'kielbasa sausage', 'ground beef', 'ground pork', 'veal cutlets', 'beef brisket', 'lamb shoulder', 'beef short ribs', 'chorizo', 'chicken thighs', 'beef ribeye', 'chicken pieces', 'prosciutto', 'fresh clams', 'sea bass fillets', 'beef stew meat', 'pork chops', 'halibut fillets', 'trout fillets', 'swordfish steaks', 'rack of lamb', 'sole fillets', 'pork shoulder', 'beef roast', 'lamb shanks', 'lamb chops'],
+        'Milchprodukte & Eier': ['eggs', 'butter', 'milk', 'heavy cream', 'mascarpone cheese', 'ricotta cheese', 'mozzarella cheese', 'parmesan cheese', 'gruyere cheese', 'goat cheese', 'feta cheese', 'cheddar cheese', 'sour cream', 'cream cheese', 'monterey jack cheese', 'soft-boiled eggs', 'hard-boiled eggs'],
+        'Getreide & Brot': ['wild rice', 'quinoa', 'pearl barley', 'brown rice', 'bulgur', 'basmati rice', 'arborio rice', 'pasta', 'lasagna sheets', 'bread', 'pie crust', 'puff pastry', 'breadcrumbs', 'flour', 'short grain rice', 'white rice', 'jasmine rice', 'couscous', 'rye bread', 'sourdough bread', 'naan bread', 'pita bread', 'injera bread', 'macaroni', 'spaetzle', 'ramen noodles', 'orzo pasta', 'egg noodles', 'corn tortillas', 'pierogi'],
+        'Hülsenfrüchte & Nüsse': ['chickpeas', 'green lentils', 'red lentils', 'white beans', 'black beans', 'pine nuts', 'pumpkin seeds', 'kidney beans', 'black lentils', 'mixed lentils', 'walnuts', 'peanuts', 'sliced almonds'],
+        'Vorratskammer & Gewürze': ['olive oil', 'vegetable oil', 'salt', 'black pepper', 'nutmeg', 'curry powder', 'dijon mustard', 'balsamic vinegar', 'red wine vinegar', 'honey', 'sugar', 'tomato sauce', 'tomatoes (canned)', 'coconut cream', 'white wine', 'vegetable broth', 'coconut milk', 'soy sauce', 'sesame oil', 'teriyaki sauce', 'miso paste', 'garam masala', 'jerk seasoning', 'berbere spice', 'moroccan spice blend', 'enchilada sauce', 'bbq sauce', 'maple syrup', 'sumac', 'tomato salsa', 'fish sauce', 'gochujang', 'sesame seeds', 'lingonberry jam', 'red wine', 'beef broth', 'chicken broth', 'kimchi', 'sauerkraut', 'capers', 'kalamata olives', 'preserved lemons', 'tomato paste', 'gingersnap cookies', 'bay leaves', 'juniper berries', 'caraway seeds', 'cumin', 'turmeric', 'paprika', 'allspice', 'vanilla extract', 'baking powder', 'powdered sugar', 'brown sugar', 'palm sugar', 'scotch bonnet pepper', 'thai chilies', 'pickled beets']
     };
 
     // Aggregate all ingredients from active meals only
@@ -728,7 +726,7 @@ function copyShortList() {
     });
 
     // Generate simple text list
-    let shortListText = `Shopping List - Week ${calendarWeek}\nGenerated: ${new Date().toLocaleDateString()}\n\n`;
+    let shortListText = `Einkaufsliste - Woche ${calendarWeek}\nErstellt: ${new Date().toLocaleDateString()}\n\n`;
     
     Object.entries(categorizedIngredients)
         .filter(([category, ingredients]) => Object.keys(ingredients).length > 0)
@@ -744,7 +742,7 @@ function copyShortList() {
 
     // Copy to clipboard
     navigator.clipboard.writeText(shortListText).then(() => {
-        alert('Short shopping list copied to clipboard! You can now paste it in WhatsApp or any other app.');
+        alert('Kurze Einkaufsliste in die Zwischenablage kopiert! Sie können sie jetzt in WhatsApp oder einer anderen App einfügen.');
     }).catch(err => {
         // Fallback for older browsers
         const textArea = document.createElement('textarea');
@@ -758,7 +756,7 @@ function copyShortList() {
         
         try {
             document.execCommand('copy');
-            alert('Short shopping list copied to clipboard! You can now paste it in WhatsApp or any other app.');
+            alert('Kurze Einkaufsliste in die Zwischenablage kopiert! Sie können sie jetzt in WhatsApp oder einer anderen App einfügen.');
         } catch (err) {
             alert('Failed to copy to clipboard. Please try again or copy manually.');
             console.error('Copy failed:', err);
@@ -838,10 +836,10 @@ function showListView(type) {
         emptyMessage.innerHTML = `
             <div class="empty-list-content">
                 <div class="empty-list-icon">${type === 'favorites' ? '❤️' : '🚫'}</div>
-                <h3>No ${type === 'favorites' ? 'Favorite' : 'Banned'} Meals Yet</h3>
+                <h3>Noch keine ${type === 'favorites' ? 'Lieblings' : 'verbannten'} Gerichte</h3>
                 <p>${type === 'favorites' 
-                    ? 'Rate some meals with 👍 to add them to your favorites!' 
-                    : 'Rate some meals with 👎 to add them to your banned list!'}</p>
+                    ? 'Bewerte einige Gerichte mit 👍, um sie zu deinen Favoriten hinzuzufügen!' 
+                    : 'Bewerte einige Gerichte mit 👎, um sie zu deiner Bannliste hinzuzufügen!'}</p>
             </div>
         `;
         container.appendChild(emptyMessage);
@@ -856,7 +854,7 @@ function showListView(type) {
 
             mealCard.innerHTML = `
                 <img src="${meal.image}" alt="${meal.title}" class="meal-image">
-                <div class="meal-title">${getFlagForTitle(meal.title)} ${meal.title}</div>
+                <div class="meal-title">${getFlagForRegion(meal.region)} ${meal.title}</div>
                 <div class="rating-buttons">
                     <button class="thumb-btn thumb-up ${thumbUpActive}" onclick="rateMeal('${meal.title}', 'up')">
                         👍
