@@ -86,9 +86,7 @@ h1 {
 .prev-week-btn,
 .export-btn,
 .favorites-btn,
-.banned-btn,
-.save-btn,
-.load-btn {
+.banned-btn {
   border: none;
   padding: 15px 30px;
   font-size: 18px;
@@ -172,26 +170,6 @@ h1 {
   box-shadow: 0 6px 20px rgba(255, 245, 157, 0.6);
 }
 
-/* Row 4: Red pastels (Save, Load) */
-.save-btn {
-  background: linear-gradient(45deg, #ffebee, #ffcdd2);
-  box-shadow: 0 4px 15px rgba(255, 205, 210, 0.4);
-}
-
-.save-btn:hover {
-  background: linear-gradient(45deg, #ffcdd2, #ef9a9a);
-  box-shadow: 0 6px 20px rgba(255, 205, 210, 0.6);
-}
-
-.load-btn {
-  background: linear-gradient(45deg, #fce4ec, #f8bbd9);
-  box-shadow: 0 4px 15px rgba(248, 187, 217, 0.4);
-}
-
-.load-btn:hover {
-  background: linear-gradient(45deg, #f8bbd9, #f48fb1);
-  box-shadow: 0 6px 20px rgba(248, 187, 217, 0.6);
-}
 
 .week-indicator {
   margin-bottom: 30px;

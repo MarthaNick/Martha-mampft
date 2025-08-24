@@ -240,7 +240,6 @@ function newRandomization() {
   document.getElementById("exportBtn").style.display = "inline-block";
   document.getElementById("favoritesBtn").style.display = "inline-block";
   document.getElementById("bannedBtn").style.display = "inline-block";
-  document.getElementById("saveBtn").style.display = "inline-block";
   document.getElementById("randomizeBtn").style.display = "inline-block";
   document.getElementById("weekIndicator").style.display = "block";
   updateWeekDisplay();
@@ -330,7 +329,6 @@ function surpriseMe() {
   document.getElementById("randomizeBtn").style.display = "inline-block";
   document.getElementById("weekIndicator").style.display = "block";
   document.getElementById("exportBtn").style.display = "inline-block";
-  document.getElementById("saveBtn").style.display = "inline-block";
   updateWeekDisplay();
   updateButtonStates();
 }
@@ -965,101 +963,4 @@ function showMainView() {
   document.getElementById("shoppingListContainer").style.display = "none";
 }
 
-function saveState() {
-  const state = {
-    currentWeek,
-    allWeeklyMeals,
-    usedMeatMeals,
-    usedVegetarianMeals,
-    favorites,
-    banned,
-    mealRatings,
-    startingCalendarWeek,
-    saveDate: new Date().toISOString(),
-  };
 
-  const stateString = JSON.stringify(state, null, 2);
-  const blob = new Blob([stateString], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = `meal-planner-state-${
-    new Date().toISOString().split("T")[0]
-  }.json`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-
-  alert(
-    "Zustand erfolgreich gespeichert! Sie können diesen Zustand jederzeit laden."
-  );
-}
-
-function loadState() {
-  const input = document.createElement("input");
-  input.type = "file";
-  input.accept = ".json";
-  input.style.display = "none";
-
-  input.onchange = function (event) {
-    const file = event.target.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = function (e) {
-      try {
-        const state = JSON.parse(e.target.result);
-
-        // Validate the state object
-        if (!state.allWeeklyMeals || typeof state.currentWeek !== "number") {
-          throw new Error("Ungültige Zustandsdatei");
-        }
-
-        // Restore state
-        currentWeek = state.currentWeek || 0;
-        allWeeklyMeals = state.allWeeklyMeals || {};
-        usedMeatMeals = state.usedMeatMeals || [];
-        usedVegetarianMeals = state.usedVegetarianMeals || [];
-        favorites = state.favorites || [];
-        banned = state.banned || [];
-        mealRatings = state.mealRatings || {};
-        startingCalendarWeek =
-          state.startingCalendarWeek || getCurrentWeekNumber();
-
-        // Update display
-        if (allWeeklyMeals[currentWeek]) {
-          displayMeals(allWeeklyMeals[currentWeek]);
-
-          // Show navigation buttons
-          document.getElementById("nextWeekBtn").style.display = "inline-block";
-          document.getElementById("weekIndicator").style.display = "block";
-          document.getElementById("exportBtn").style.display = "inline-block";
-          document.getElementById("favoritesBtn").style.display =
-            "inline-block";
-          document.getElementById("bannedBtn").style.display = "inline-block";
-          document.getElementById("saveBtn").style.display = "inline-block";
-
-          updateWeekDisplay();
-          updateButtonStates();
-        }
-
-        const saveDate = state.saveDate
-          ? new Date(state.saveDate).toLocaleDateString()
-          : "Unknown date";
-        alert(`State loaded successfully! (Saved on ${saveDate})`);
-      } catch (error) {
-        alert(
-          "Fehler beim Laden der Zustandsdatei. Bitte stellen Sie sicher, dass es eine gültige Meal-Planner-Zustandsdatei ist."
-        );
-        console.error("Zustand laden Fehler:", error);
-      }
-    };
-
-    reader.readAsText(file);
-  };
-
-  document.body.appendChild(input);
-  input.click();
-  document.body.removeChild(input);
-}
