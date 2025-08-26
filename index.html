@@ -47,11 +47,9 @@
       </div>
       <div class="buttons-panel">
       <div class="button-container">
-      <!-- Row 1: Prev | New Randomization | Next -->
+      <!-- Row 1: New Randomization only -->
       <div class="nav-randomize-row">
-        <button class="prev-week-btn align-left" onclick="previousWeek()" id="prevWeekBtn">← Vorherige Woche</button>
         <button class="randomize-btn" onclick="newRandomization()" id="randomizeBtn">Neue Zufallsauswahl</button>
-        <button class="next-week-btn align-right" onclick="nextWeek()" id="nextWeekBtn">Nächste Woche →</button>
       </div>
 
       <!-- Row 2: Favorites, Banned (Blue pastels) -->
@@ -89,9 +87,6 @@
       </div>
     </div>
 
-    <div class="week-indicator" id="weekIndicator" style="display: none">
-      <span id="weekText"></span>
-    </div>
 
     <div class="meals-container" id="mealsContainer"></div>
     <div id="constraintsLegend">

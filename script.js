@@ -208,26 +208,7 @@ function updateRatingButtons() {
   });
 }
 
-function updateWeekDisplay() {
-  const calendarWeek = getCalendarWeekForMealWeek(currentWeek);
-  document.getElementById(
-    "weekText"
-  ).textContent = `Kalenderwoche ${calendarWeek}`;
-}
 
-function updateButtonStates() {
-  const prevBtn = document.getElementById("prevWeekBtn");
-
-  // Always show previous week button
-  prevBtn.style.display = "inline-block";
-
-  // Enable/disable based on current week
-  if (currentWeek <= 0) {
-    prevBtn.disabled = true;
-  } else {
-    prevBtn.disabled = false;
-  }
-}
 
 function newRandomization() {
   // Generate 4 random meals for the current week honoring constraints
@@ -235,15 +216,10 @@ function newRandomization() {
   allWeeklyMeals[currentWeek] = selectedMeals;
   displayMeals(selectedMeals);
   // Reveal controls
-  document.getElementById("nextWeekBtn").style.display = "inline-block";
-  document.getElementById("weekIndicator").style.display = "block";
   document.getElementById("exportBtn").style.display = "inline-block";
   document.getElementById("favoritesBtn").style.display = "inline-block";
   document.getElementById("bannedBtn").style.display = "inline-block";
   document.getElementById("randomizeBtn").style.display = "inline-block";
-  document.getElementById("weekIndicator").style.display = "block";
-  updateWeekDisplay();
-  updateButtonStates();
 }
 
 function generateMeals() {
@@ -277,11 +253,6 @@ document.addEventListener("DOMContentLoaded", () => {
   usedVegetarianMeals = [];
   allWeeklyMeals = {};
 
-  // Show week indicator and update button states immediately
-  document.getElementById("weekIndicator").style.display = "block";
-  document.getElementById("prevWeekBtn").style.display = "inline-block";
-  updateWeekDisplay();
-  updateButtonStates();
 
   newRandomization();
 });
@@ -325,12 +296,8 @@ function surpriseMe() {
   displayMeals(selectedMeals);
 
   // Show navigation buttons
-  document.getElementById("nextWeekBtn").style.display = "inline-block";
   document.getElementById("randomizeBtn").style.display = "inline-block";
-  document.getElementById("weekIndicator").style.display = "block";
   document.getElementById("exportBtn").style.display = "inline-block";
-  updateWeekDisplay();
-  updateButtonStates();
 }
 
 function showShoppingList() {
@@ -345,7 +312,6 @@ function showShoppingList() {
   if (isMainView) {
     document.getElementById("mealsContainer").style.display = "none";
     document.querySelector(".button-container").style.display = "none";
-    document.getElementById("weekIndicator").style.display = "none";
   }
 
   document.getElementById("favoritesContainer").style.display = "none";
@@ -832,38 +798,7 @@ function copyShortList() {
     });
 }
 
-function nextWeek() {
-  currentWeek++;
 
-  if (!allWeeklyMeals[currentWeek]) {
-    // Reset used meals every 4 weeks to ensure variety
-    if (currentWeek % 4 === 0) {
-      usedMeatMeals = [];
-      usedVegetarianMeals = [];
-    }
-    const selectedMeals = generateWeeklyMeals();
-    allWeeklyMeals[currentWeek] = selectedMeals;
-  }
-
-  displayMeals(allWeeklyMeals[currentWeek]);
-
-  document.getElementById("nextWeekBtn").style.display = "inline-block";
-  document.getElementById("randomizeBtn").style.display = "inline-block";
-  updateWeekDisplay();
-  updateButtonStates();
-}
-
-function previousWeek() {
-  if (currentWeek > 0) {
-    currentWeek--;
-    displayMeals(allWeeklyMeals[currentWeek]);
-
-    document.getElementById("nextWeekBtn").style.display = "inline-block";
-    document.getElementById("randomizeBtn").style.display = "inline-block";
-    updateWeekDisplay();
-    updateButtonStates();
-  }
-}
 
 function showFavorites() {
   showListView("favorites");
@@ -880,7 +815,6 @@ function showListView(type) {
   if (isMainView) {
     document.getElementById("mealsContainer").style.display = "none";
     document.querySelector(".button-container").style.display = "none";
-    document.getElementById("weekIndicator").style.display = "none";
   }
 
   document.getElementById("favoritesContainer").style.display =
@@ -956,8 +890,6 @@ function showListView(type) {
 function showMainView() {
   document.getElementById("mealsContainer").style.display = "";
   document.querySelector(".button-container").style.display = "";
-  document.getElementById("weekIndicator").style.display =
-    Object.keys(allWeeklyMeals).length > 0 ? "block" : "none";
   document.getElementById("favoritesContainer").style.display = "none";
   document.getElementById("bannedContainer").style.display = "none";
   document.getElementById("shoppingListContainer").style.display = "none";
